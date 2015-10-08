@@ -1,0 +1,6 @@
+[submodule "signalmaster"]
+	path = signalmaster
+	url = https://github.com/andyet/signalmaster.git
+[submodule "SimpleWebRTC"]
+	path = SimpleWebRTC
+	url = https://github.com/andyet/SimpleWebRTC.git
