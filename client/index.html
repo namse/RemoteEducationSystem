@@ -1,24 +1,41 @@
-<!DOCTYPE html>
 <html>
 
 <head>
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="js/SimpleWebRTC/latest.js"></script>
-    <script src="js/index.js"></script>
-    <style>
-    #remoteVideos video {
-        height: 150px;
-    }
-    
-    #localVideo {
-        height: 150px;
-    }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- stylesheet -->
+    <link href="/css/literallycanvas.css" rel="stylesheet">
 </head>
 
 <body>
     <video id="localVideo"></video>
     <div id="remoteVideos"></div>
+    <li class="chat page">
+        <div class="chatArea">
+            <ul class="messages"></ul>
+        </div>
+        <input class="inputMessage" placeholder="Type here..." />
+    </li>
+    <!-- where the widget goes. you can do CSS to it. -->
+    <div class="literally"></div>
 </body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
+<script src="/js/literallycanvas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="/js/SimpleWebRTC/latest.js"></script>
+<script src="/js/index.js"></script>
+<!-- kick it off -->
+<script>
+// Look ma, no jQuery!
+LC.init(
+    document.getElementsByClassName('literally')[0], {
+        imageURLPrefix: '/static/img'
+    }
+);
+
+/* or if you just love jQuery,
+    $('.literally').literallycanvas({imageURLPrefix: '/static/img'})
+*/
+</script>
 
 </html>
