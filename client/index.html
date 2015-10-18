@@ -1,11 +1,15 @@
 <html>
-
 <head>
+	<title>hello</title>
     <link rel="stylesheet" href="css/style.css">
     <!-- stylesheet -->
     <link href="/css/literallycanvas.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+	<script src="/js/literallycanvas.js"></script>
+	<script src="/js/SimpleWebRTC/latest.js"></script>
 </head>
-
 <body>
     <video id="localVideo"></video>
     <div id="remoteVideos"></div>
@@ -17,25 +21,22 @@
     </li>
     <!-- where the widget goes. you can do CSS to it. -->
     <div class="literally"></div>
+
+	
+	<script src="/js/index.js"></script>
+	<!-- kick it off -->
+	<script>
+	// Look ma, no jQuery!
+	$(window).on("load", function() {
+		LC.init(
+			document.getElementsByClassName('literally')[0], {
+				imageURLPrefix: '/static/img'
+			}
+		);
+	});
+	/* or if you just love jQuery,
+		$('.literally').literallycanvas({imageURLPrefix: '/static/img'})
+	*/
+	</script>
 </body>
-<script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
-<script src="/js/literallycanvas.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="/js/SimpleWebRTC/latest.js"></script>
-<script src="/js/index.js"></script>
-<!-- kick it off -->
-<script>
-// Look ma, no jQuery!
-LC.init(
-    document.getElementsByClassName('literally')[0], {
-        imageURLPrefix: '/static/img'
-    }
-);
-
-/* or if you just love jQuery,
-    $('.literally').literallycanvas({imageURLPrefix: '/static/img'})
-*/
-</script>
-
 </html>
