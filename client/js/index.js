@@ -189,3 +189,18 @@ function addMessageElement(el, options) {
 function cleanInput(input) {
     return $('<div/>').text(input).text();
 }
+
+
+
+// Service code
+// Look ma, no jQuery!
+$(window).on("load", function() {
+	LC.init(
+		document.getElementsByClassName('literally')[0], {
+			imageURLPrefix: '/static/img'
+		}
+	);
+});
+/* or if you just love jQuery,
+	$('.literally').literallycanvas({imageURLPrefix: '/static/img'})
+*/
