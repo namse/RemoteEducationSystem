@@ -3,11 +3,6 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
-    "scripts": {
-        "test": "node index.js",
-        "lint": "jshint .",
-        "validate": "npm ls"
-    },
     "author": "Nam SeHyun skatpgusskat@naver.com",
     "license": "MIT",
     "dependencies": {
