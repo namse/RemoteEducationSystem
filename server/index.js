@@ -41,6 +41,16 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('chat', msg);
         // TODO : send msg to same room
     });
+
+    socket.on('draw', function(data) {
+
+        // packet : 'draw'
+        // - shapeJSON
+        // - previousShapeId
+
+        console.log(data);
+        socket.broadcast.emit('draw', data);
+    });
     socket.on('disconnect', function() {
 
     });

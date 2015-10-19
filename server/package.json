@@ -1,33 +1,28 @@
 {
-  "name": "english_education_demo_server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "node index.js",
-    "lint": "jshint .",
-    "validate": "npm ls"
-  },
-  "author": "Nam SeHyun skatpgusskat@naver.com",
-  "license": "MIT",
-  "dependencies": {
-    "ejs": "^2.3.4",
-    "express": "^4.13.3",
-    "fs": "0.0.2",
-    "html": "0.0.10",
-    "socket.io": "0.9.16",
-    "getconfig": "0.3.0",
-    "node-uuid": "1.4.3",
-    "yetify": "0.1.0"
-  },
-  "devDependencies": {
-    "socket.io-client": "0.9.16",
-    "precommit-hook": "3.0.0",
-    "tape": "^4.2.1"
-  },
-  "pre-commit": [
-    "lint",
-    "validate",
-    "test"
-  ]
+    "name": "english_education_demo_server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "node index.js",
+        "lint": "jshint .",
+        "validate": "npm ls"
+    },
+    "author": "Nam SeHyun skatpgusskat@naver.com",
+    "license": "MIT",
+    "dependencies": {
+        "ejs": "^2.3.4",
+        "express": "^4.13.3",
+        "fs": "0.0.2",
+        "html": "0.0.10",
+        "socket.io": "0.9.16",
+        "getconfig": "0.3.0",
+        "node-uuid": "1.4.3",
+        "yetify": "0.1.0"
+    },
+    "devDependencies": {
+        "socket.io-client": "0.9.16",
+        "precommit-hook": "3.0.0",
+        "tape": "^4.2.1"
+    }
 }

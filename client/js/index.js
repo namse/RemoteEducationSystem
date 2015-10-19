@@ -8,6 +8,8 @@ var chattingServerURL;
 var chattingSocket;
 var userName;
 
+var literallyCanvas;
+
 
 // chatting system
 // from https://github.com/socketio/socket.io/blob/master/examples/chat/public/main.js
@@ -33,19 +35,22 @@ var $inputMessage = $('.inputMessage'); // Input message input box
 // - isTeacher (boolean. not 1 or 0)
 // - webRTCSignalServerURL
 
-$.post("init", function(data) {
-    console.log(data);
-    isTeacher = data.isTeacher;
-    roomID = data.roomID;
-    webRTCSignalServerURL = data.webRTCSignalServerURL;
-    chattingServerURL = data.chattingServerURL;
-    userName = data.userName;
+function sendInitPacket() {
+    $.post("init", function(data) {
+        console.log(data);
+        isTeacher = data.isTeacher;
+        roomID = data.roomID;
+        webRTCSignalServerURL = data.webRTCSignalServerURL;
+        chattingServerURL = data.chattingServerURL;
+        userName = data.userName;
 
-    loadWebRTC();
-    loadChatting();
-}).fail(function() {
-    alert("error");
-});
+        loadWebRTC();
+        loadChatting();
+        initCanvas();
+    }).fail(function() {
+        alert("error");
+    });
+}
 
 
 function loadWebRTC() {
@@ -70,7 +75,7 @@ function loadChatting() {
     chattingSocket = io.connect(chattingServerURL);
 
     $('form').submit(function() {
-        chattingSocket.emit('chat message', $('#m').val());
+        chattingSocket.emit('chat', $('#m').val());
         $('#m').val('');
         return false;
     });
@@ -190,16 +195,53 @@ function cleanInput(input) {
     return $('<div/>').text(input).text();
 }
 
+function initCanvas() {
 
+    literallyCanvas = LC.init(
+        document.getElementsByClassName('literally')[0], {
+            imageURLPrefix: '/static/img'
+        }
+    );
+
+    // if teacher -> send drawing information
+    if (isTeacher) {
+
+
+        literallyCanvas.on('shapeSave', function(data) {
+            console.log(data);
+            var packet = {
+                shapeJSON: LC.shapeToJSON(data.shape),
+                previousShapeId: data.previousShapeId
+            };
+
+            // packet : 'draw'
+            // - shapeJSON
+            // - previousShapeId
+
+            chattingSocket.emit('draw', packet);
+            //localStorage.setItem(localStorageKey, JSON.stringify(lc.getSnapshot()));
+        });
+    } else // else -> student -> receive drawing information
+    {
+        // student can't use canvas!
+        // disable literally canvas.
+        document.getElementsByClassName('literally')[0].style.pointerEvents = 'none';
+
+        chattingSocket.on('draw', function(data) {
+
+            // packet : 'draw'
+            // - shapeJSON
+            // - previousShapeId
+
+            literallyCanvas.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
+        });
+    }
+}
 
 // Service code
 // Look ma, no jQuery!
 $(window).on("load", function() {
-	LC.init(
-		document.getElementsByClassName('literally')[0], {
-			imageURLPrefix: '/static/img'
-		}
-	);
+    sendInitPacket();
 });
 /* or if you just love jQuery,
 	$('.literally').literallycanvas({imageURLPrefix: '/static/img'})
