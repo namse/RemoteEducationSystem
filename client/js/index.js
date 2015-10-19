@@ -8,6 +8,9 @@ var chattingServerURL;
 var chattingSocket;
 var userName;
 
+var isMuted = false;
+var isCameraPause = false;
+
 var literallyCanvas;
 
 
@@ -101,6 +104,8 @@ function loadWebRTC() {
         webRTC.on('readyToCall', function() {
             // you can name it anything
             webRTC.joinRoom(roomID);
+
+            initButtons();
         });
     });
 
@@ -272,6 +277,26 @@ function initCanvas() {
             literallyCanvas.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
         });
     }
+}
+
+function initButtons() {
+    $("#muteBtn").click(function() {
+        isMuted = !isMuted;
+        if (isMuted)
+            webRTC.mute();
+        else
+            webRTC.unmute();
+    });
+
+    $("#cameraPauseBtn").click(function() {
+        isCameraPause = !isCameraPause;
+        if (isCameraPause)
+            webRTC.pauseVideo();
+        else
+            webRTC.resumeVideo();
+    });
+
+    //$(".")
 }
 
 // Service code
