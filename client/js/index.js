@@ -246,21 +246,46 @@ function initCanvas() {
 
     // if teacher -> send drawing information
     if (isTeacher) {
-
-
         literallyCanvas.on('shapeSave', function(data) {
-            console.log(data);
             var packet = {
+                type: 'shapeSave',
                 shapeJSON: LC.shapeToJSON(data.shape),
                 previousShapeId: data.previousShapeId
             };
-
-            // packet : 'draw'
-            // - shapeJSON
-            // - previousShapeId
-
             chattingSocket.emit('draw', packet);
-            //localStorage.setItem(localStorageKey, JSON.stringify(lc.getSnapshot()));
+        });
+        literallyCanvas.on('clear', function() {
+            var packet = {
+                type: 'clear'
+            };
+            chattingSocket.emit('draw', packet);
+        });
+        literallyCanvas.on('undo', function() {
+            var packet = {
+                type: 'undo'
+            };
+            chattingSocket.emit('draw', packet);
+        });
+        literallyCanvas.on('redo', function() {
+            var packet = {
+                type: 'redo'
+            };
+            chattingSocket.emit('draw', packet);
+        });
+        literallyCanvas.on('pan', function(panData) {
+            var packet = {
+                type: 'pan',
+                x: panData.x,
+                y: panData.y
+            };
+            chattingSocket.emit('draw', packet);
+        });
+        literallyCanvas.on('zoom', function(zoomData) {
+            var packet = {
+                type: 'zoom',
+                amount: zoomData.newScale
+            };
+            chattingSocket.emit('draw', packet);
         });
     } else // else -> student -> receive drawing information
     {
@@ -271,10 +296,24 @@ function initCanvas() {
         chattingSocket.on('draw', function(data) {
 
             // packet : 'draw'
-            // - shapeJSON
-            // - previousShapeId
+            // - type
+            // - content that defended on type.
 
-            literallyCanvas.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
+            if (data.type == 'shapeSave') {
+                literallyCanvas.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
+            } else if (data.type == 'pan') {
+                literallyCanvas.setPan(data.x, data.y);
+            } else if (data.type == 'zoom') {
+                literallyCanvas.setZoom(data.amount);
+            } else if (data.type == 'clear') {
+                literallyCanvas.clear();
+            } else if (data.type == 'undo') {
+                literallyCanvas.undo();
+            } else if (data.type == 'redo') {
+                literallyCanvas.redo();
+            } else {
+                console.log(data);
+            }
         });
     }
 }

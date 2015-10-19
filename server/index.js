@@ -45,8 +45,8 @@ io.on('connection', function(socket) {
     socket.on('draw', function(data) {
 
         // packet : 'draw'
-        // - shapeJSON
-        // - previousShapeId
+        // -- type
+        // -- content depended by type
 
         console.log(data);
         socket.broadcast.emit('draw', data);
