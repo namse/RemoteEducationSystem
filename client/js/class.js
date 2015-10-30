@@ -4,9 +4,12 @@ var isTeacher;
 var roomID;
 var webRTC;
 var webRTCSignalServerURL;
+var userName;
+
 var chattingServerURL;
 var chattingSocket;
-var userName;
+var stream; // for file transfer
+
 
 var isMuted = false;
 var isCameraPause = false;
@@ -347,8 +350,6 @@ function getCustomCanvasTools(LC) {
 
             didBecomeActive: function(lc) {
                 backgroundFileUploadElement.click();
-                if (prevCanvasTool)
-                    lc.setTool(prevCanvasTool);
             },
             willBecomeInactive: function(lc) {
 
@@ -374,9 +375,18 @@ function handleBackgroundFiles() {
                     scale: 2
                 })];
             literallyCanvas.repaintLayer('background', false);
+            if (prevCanvasTool)
+                literallyCanvas.setTool(prevCanvasTool);
         }
         reader.readAsDataURL(this.files[0]);
+
+        // upload a file to the server. 
+        ss(chattingSocket).emit('background', stream, {
+            size: this.files[0].size
+        });
+        ss.createBlobReadStream(this.files[0]).pipe(stream);
     }
+
 }
 
 function initButtons() {
@@ -407,6 +417,9 @@ $(window).on("load", function() {
     backgroundFileUploadElement = document.createElement("INPUT");
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", handleBackgroundFiles, false);
+
+    ss.forceBase64 = true;
+    stream = ss.createStream();
 });
 /* or if you just love jQuery,
     $('.literally').literallycanvas({imageURLPrefix: '/static/img'})
