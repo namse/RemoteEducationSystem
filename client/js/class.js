@@ -11,7 +11,10 @@ var userName;
 var isMuted = false;
 var isCameraPause = false;
 
-var literallyCanvas;
+var literallyCanvas; // instance canvas of current tab
+var prevCanvasTool; // need this per canvas of tab.
+
+var backgroundFileUploadElement;
 
 
 // chatting system
@@ -238,9 +241,14 @@ function cleanInput(input) {
 
 function initCanvas() {
 
+    var tools = getCustomCanvasTools(LC);
+    console.log(tools);
     literallyCanvas = LC.init(
         document.getElementsByClassName('literally')[0], {
-            imageURLPrefix: '/static/img'
+            imageURLPrefix: '/static/img',
+            tools: tools,
+            zoomMax: 32,
+            zoomMin: -32
         }
     );
 
@@ -318,6 +326,59 @@ function initCanvas() {
     }
 }
 
+function getCustomCanvasTools(LC) {
+    var defaultTools = LC.defaultTools;
+
+    for (var i = 0; i < defaultTools.length; i++) {
+        var defaultTool = defaultTools[i];
+        defaultTool.prototype.willBecomeInactive = function(lc) {
+            prevCanvasTool = this;
+            console.log(prevCanvasTool);
+        }
+    }
+
+    var backgroundImageAddingTool = function(lc) {
+        var self = this;
+        return {
+            usesSimpleAPI: false, // DO NOT FORGET THIS!!!
+            name: 'Background',
+            iconName: 'line',
+            optionsStyle: null,
+
+            didBecomeActive: function(lc) {
+                backgroundFileUploadElement.click();
+                if (prevCanvasTool)
+                    lc.setTool(prevCanvasTool);
+            },
+            willBecomeInactive: function(lc) {
+
+            }
+        }
+    }
+
+    defaultTools.push(backgroundImageAddingTool);
+    return defaultTools;
+}
+
+function handleBackgroundFiles() {
+    if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var backgroundImage = new Image()
+            backgroundImage.src = e.target.result;
+            literallyCanvas.backgroundShapes = [LC.createShape(
+                'Image', {
+                    x: 20,
+                    y: 20,
+                    image: backgroundImage,
+                    scale: 2
+                })];
+            literallyCanvas.repaintLayer('background', false);
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+}
+
 function initButtons() {
     $("#muteBtn").click(function() {
         isMuted = !isMuted;
@@ -342,7 +403,11 @@ function initButtons() {
 // Look ma, no jQuery!
 $(window).on("load", function() {
     sendInitPacket();
+
+    backgroundFileUploadElement = document.createElement("INPUT");
+    backgroundFileUploadElement.setAttribute("type", "file");
+    backgroundFileUploadElement.addEventListener("change", handleBackgroundFiles, false);
 });
 /* or if you just love jQuery,
-	$('.literally').literallycanvas({imageURLPrefix: '/static/img'})
+    $('.literally').literallycanvas({imageURLPrefix: '/static/img'})
 */
