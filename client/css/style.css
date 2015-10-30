@@ -358,6 +358,7 @@ main > section {
 	border: 1px solid #999;
 	border-radius: 5px;
 	display: none;
+	background-color: #ccc;
 }
 #canvasArea #addTab button {
 	margin: 5px 10px;
@@ -378,6 +379,8 @@ main > section {
 }
 #canvasArea #tabs .tab {
 	position: absolute;
+	width: 100%;
+	height: 100%;
 }
 
 

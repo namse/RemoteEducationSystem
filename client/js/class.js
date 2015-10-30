@@ -235,87 +235,6 @@ function cleanInput(input) {
     return $('<div/>').text(input).text();
 }
 
-function initCanvas() {
-
-    literallyCanvas = LC.init(
-        document.getElementsByClassName('literally')[0], {
-            imageURLPrefix: '/static/img'
-        }
-    );
-
-    // if teacher -> send drawing information
-    if (isTeacher) {
-        literallyCanvas.on('shapeSave', function(data) {
-            var packet = {
-                type: 'shapeSave',
-                shapeJSON: LC.shapeToJSON(data.shape),
-                previousShapeId: data.previousShapeId
-            };
-            chattingSocket.emit('draw', packet);
-        });
-        literallyCanvas.on('clear', function() {
-            var packet = {
-                type: 'clear'
-            };
-            chattingSocket.emit('draw', packet);
-        });
-        literallyCanvas.on('undo', function() {
-            var packet = {
-                type: 'undo'
-            };
-            chattingSocket.emit('draw', packet);
-        });
-        literallyCanvas.on('redo', function() {
-            var packet = {
-                type: 'redo'
-            };
-            chattingSocket.emit('draw', packet);
-        });
-        literallyCanvas.on('pan', function(panData) {
-            var packet = {
-                type: 'pan',
-                x: panData.x,
-                y: panData.y
-            };
-            chattingSocket.emit('draw', packet);
-        });
-        literallyCanvas.on('zoom', function(zoomData) {
-            var packet = {
-                type: 'zoom',
-                amount: zoomData.newScale
-            };
-            chattingSocket.emit('draw', packet);
-        });
-    } else // else -> student -> receive drawing information
-    {
-        // student can't use canvas!
-        // disable literally canvas.
-        document.getElementsByClassName('literally')[0].style.pointerEvents = 'none';
-
-        chattingSocket.on('draw', function(data) {
-
-            // packet : 'draw'
-            // - type
-            // - content that defended on type.
-
-            if (data.type == 'shapeSave') {
-                literallyCanvas.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
-            } else if (data.type == 'pan') {
-                literallyCanvas.setPan(data.x, data.y);
-            } else if (data.type == 'zoom') {
-                literallyCanvas.setZoom(data.amount);
-            } else if (data.type == 'clear') {
-                literallyCanvas.clear();
-            } else if (data.type == 'undo') {
-                literallyCanvas.undo();
-            } else if (data.type == 'redo') {
-                literallyCanvas.redo();
-            } else {
-                console.log(data);
-            }
-        });
-    }
-}
 
 function initButtons() {
     $("#muteBtn").click(function() {
@@ -333,22 +252,85 @@ function initButtons() {
         else
             webRTC.resumeVideo();
     });
-
-    //$(".")
 }
 
-// Service code
-// Look ma, no jQuery!
-$(window).on("load", function() {
-    sendInitPacket();
-});
 
-$(document).on("ready", function() {
-	TAB.init();
-});
-/* or if you just love jQuery,
-	$('.literally').literallycanvas({imageURLPrefix: '/static/img'})
-*/
+var LCANVAS = {
+	init: function(canvasDiv) {
+		canvasDiv.literallycanvas({imageURLPrefix: '/static/img'});
+
+		// if teacher -> send drawing information
+		if (isTeacher) {
+			canvasDiv.on('shapeSave', function(data) {
+				var packet = {
+					type: 'shapeSave',
+					shapeJSON: LC.shapeToJSON(data.shape),
+					previousShapeId: data.previousShapeId
+				};
+				chattingSocket.emit('draw', packet);
+			});
+			canvasDiv.on('clear', function() {
+				var packet = {
+					type: 'clear'
+				};
+				chattingSocket.emit('draw', packet);
+			});
+			canvasDiv.on('undo', function() {
+				var packet = {
+					type: 'undo'
+				};
+				chattingSocket.emit('draw', packet);
+			});
+			canvasDiv.on('redo', function() {
+				var packet = {
+					type: 'redo'
+				};
+				chattingSocket.emit('draw', packet);
+			});
+			canvasDiv.on('pan', function(panData) {
+				var packet = {
+					type: 'pan',
+					x: panData.x,
+					y: panData.y
+				};
+				chattingSocket.emit('draw', packet);
+			});
+			canvasDiv.on('zoom', function(zoomData) {
+				var packet = {
+					type: 'zoom',
+					amount: zoomData.newScale
+				};
+				chattingSocket.emit('draw', packet);
+			});
+		} else { // else -> student -> receive drawing information
+			// student can't use canvas!
+			// disable literally canvas.
+			canvasDiv.css("pointer-events", "none");
+			chattingSocket.on('draw', function(data) {
+
+				// packet : 'draw'
+				// - type
+				// - content that defended on type.
+
+				if (data.type == 'shapeSave') {
+					canvasDiv.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
+				} else if (data.type == 'pan') {
+					canvasDiv.setPan(data.x, data.y);
+				} else if (data.type == 'zoom') {
+					canvasDiv.setZoom(data.amount);
+				} else if (data.type == 'clear') {
+					canvasDiv.clear();
+				} else if (data.type == 'undo') {
+					canvasDiv.undo();
+				} else if (data.type == 'redo') {
+					canvasDiv.redo();
+				} else {
+					console.log(data);
+				}
+			});
+		}
+	}
+}
 
 
 var TAB = {
@@ -408,6 +390,11 @@ var TAB = {
 		});
 		$("#tabs").append(newTab);
 		
+		// add canvas
+		if (tabTemplate === "whiteBoard" || tabTemplate === "textbook") {
+			LCANVAS.init($("#lcanvas" + this.tabCount));
+		}
+		
 		// add tab button
 		var tabBtn = $("#tabBtnTemplate").html();
 		Mustache.parse(tabBtn);
@@ -420,3 +407,12 @@ var TAB = {
 		this.selectTab(this.tabCount);
 	}
 }
+
+// Service code
+$(window).on("load", function() {
+    sendInitPacket();
+});
+
+$(document).on("ready", function() {
+	TAB.init();
+});
