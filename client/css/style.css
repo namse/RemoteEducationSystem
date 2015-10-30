@@ -1,7 +1,7 @@
 html,
 body {
     width: 100%;
-    height: 100%
+    height: 100%;
 }
 
 html {
@@ -329,6 +329,57 @@ main > section {
     padding-left: 7px;
     padding-right: 15px;
 }
+#canvasArea #tabNav {
+	position: relative;
+	width: 100%;
+	height: 30px;
+	z-index: 100;
+}
+#canvasArea #tabNav li {
+	float: left;
+	width: 10%;
+}
+#canvasArea #tabNav .tabBtn {
+	width: 100%;
+	height: 30px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	background-color: #ddd;
+	border: 1px solid #999;
+	border-bottom: none;
+	line-height: 30px;
+}
+#canvasArea #tabNav .tabBtn:hover {
+	background-color: #bbb;
+}
+#canvasArea #addTab {
+	width: 100px;
+	height: 107px;
+	border: 1px solid #999;
+	border-radius: 5px;
+	display: none;
+}
+#canvasArea #addTab button {
+	margin: 5px 10px;
+	width: 80%;
+	height: 25px;
+	background-color: #43A047;
+	color: white;
+}
+#canvasArea #tabs {
+	position: relative;
+	width: 100%;
+	height: 595px;
+	background-color: #ddd;
+	border: 1px solid #999;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-top-right-radius: 8px;
+}
+#canvasArea #tabs .tab {
+	position: absolute;
+}
+
 
 footer {
     position: fixed;

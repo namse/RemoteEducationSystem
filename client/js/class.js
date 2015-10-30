@@ -49,7 +49,6 @@ function sendInitPacket() {
 
         loadWebRTC();
         loadChatting();
-        initCanvas();
     }).fail(function() {
         alert("error");
     });
@@ -343,6 +342,81 @@ function initButtons() {
 $(window).on("load", function() {
     sendInitPacket();
 });
+
+$(document).on("ready", function() {
+	TAB.init();
+});
 /* or if you just love jQuery,
 	$('.literally').literallycanvas({imageURLPrefix: '/static/img'})
 */
+
+
+var TAB = {
+	tabCount : 0,
+	init : function() {
+		this.tabControl();
+	},
+	tabControl : function() {
+		// tabNav eventListener
+		$("#tabNav").on("click", ".tabBtn", function(event) {
+			var tabButton = $(event.target);
+			var currentTab = tabButton.val(); 
+			if (currentTab === "+") {
+				this.tabCount++;
+				if ($("#addTab").hasClass("on")) {
+					$("#addTab").css("display", "none");
+				} else {
+					$("#addTab").css("display", "block");
+				}
+				$("#addTab").toggleClass("on");
+				return;
+			}
+			
+			this.selectTab(currentTab);
+		}.bind(this));
+		
+		// addTab eventListener
+		$("#addTab").on("click", function(event) {
+			var addButton = $(event.target);
+			this.addTab(addButton.val());
+			$("#addTab").css("display", "none");
+			$("#addTab").toggleClass("on");
+			
+			// tab count check
+			if ($("#tabNav").children().length >= 11) {
+				$("#plusTab").css("display", "none");
+			} else {
+				$("#plusTab").css("display", "block");
+			}
+		}.bind(this));
+	},
+	selectTab : function(tabNumber) {
+		//tab 
+		$(".tab").css("display", "none");
+		$("#tab"+tabNumber).css("display", "block");
+		
+		//tab button
+		$(".tabBtn").css("background-color", "#ddd");
+		$(".tabBtn").eq(parseInt(tabNumber) - 1).css("background-color", "#bbb");
+	},
+	addTab : function(tabTemplate) {
+		// add tab
+		var template = $("#" + tabTemplate + "Template").html();
+		Mustache.parse(template);
+		var newTab = Mustache.render(template, {
+			tabCount: this.tabCount
+		});
+		$("#tabs").append(newTab);
+		
+		// add tab button
+		var tabBtn = $("#tabBtnTemplate").html();
+		Mustache.parse(tabBtn);
+		var newTabBtn = Mustache.render(tabBtn, {
+			tabCount: this.tabCount
+		});
+		$("#plusTab").before(newTabBtn);
+		
+		// select new tab
+		this.selectTab(this.tabCount);
+	}
+}
