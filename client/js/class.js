@@ -506,7 +506,7 @@ var TAB = {
         $("#tabs").append(newTab);
 
         LCANVAS.init($("#lcanvas" + this.tabCount));
-
+		
         // add tab button
         this.addTabBnt();
 
@@ -552,8 +552,6 @@ var TEXTBOOK = {
         } else {
             canvas.css("pointer-events", "auto");
         }
-
-
     }
 }
 
