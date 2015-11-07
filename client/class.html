@@ -13,6 +13,7 @@
     <script src="/js/literallycanvas.js"></script>
     <script src="/js/SimpleWebRTC/latest.js"></script>
     <script src="//cdn.webrtc-experiment.com/DetectRTC.js"></script>
+	<script src="js/mustache.min.js"></script>
 </head>
 
 <body>
@@ -70,12 +71,43 @@
             </div>
         </section>
         <section id="canvasArea">
-            <div class="literally"></div>
+			<ul id="tabNav">
+				<li id="plusTab">
+					<button class="tabBtn" value="+">+</button>
+					<div id="addTab">
+						<button value="whiteBoard">White board</button>
+						<button value="textbook">교재</button>
+						<button value="shareScreen">화면공유</button>
+					</div>
+				</li>
+			</ul>				
+			<div id="tabs">
+				
+			</div>
         </section>
     </main>
     <footer>
         <span>Copyright Nexcos Co., Ltd. All rights reserved</span>
     </footer>
+	<script id="tabBtnTemplate" type="x-tmpl-mustache">
+		<li><button class="tabBtn" value={{tabCount}}>tab{{tabCount}}</button>
+	</script>
+	<script id="whiteBoardTemplate" type="x-tmpl-mustache">
+		<div id="tab{{tabCount}}" class="tab">
+			<div id="lcanvas{{tabCount}}"></div>
+		</div>
+	</script>
+	<script id="textbookTemplate" type="x-tmpl-mustache">
+		<div id="tab{{tabCount}}" class="tab">
+			
+			<div id="lcanvas{{tabCount}}"></div>
+		</div>
+	</script>
+	<script id="shareScreenTemplate" type="x-tmpl-mustache">
+		<div id="tab{{tabCount}}" class="tab">
+			화면 공유에 필요한 html을 여기에 넣어주세요 :D
+		</div>
+	</script>
     <script src="/js/class.js"></script>
 </body>
 
