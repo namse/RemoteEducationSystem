@@ -464,8 +464,14 @@ var TAB = {
         $("#tab" + tabNumber).css("display", "block");
 		
 		//tab button
-		$(".tabBtn").css("background-color", "#ddd");
-		$(".tabBtn").eq(parseInt(tabNumber) - 1).css("background-color", "#bbb");
+		$(".tabBtn").css({
+			"background-color": "#ddd",
+			"border-bottom": "1px solid #b8b8b8"
+		});
+		$(".tabBtn").eq(parseInt(tabNumber) - 1).css({
+			"background-color": "#fff",
+			"border-bottom": "none"
+		});
 		this.currentTab = "tab" + tabNumber;
 	},
 	addTab : function(tabTemplate) {

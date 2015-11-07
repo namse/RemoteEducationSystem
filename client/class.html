@@ -38,15 +38,6 @@
             <button id="muteBtn">M</button>
             <button id="cameraPauseBtn">V</button>
         </div>
-        <div id="fileIO">
-            <button id="openBtn">O</button>
-            <button id="saveBtn">S</button>
-            <div class="navSpliter"></div>
-        </div>
-        <div id="canvasControl">
-            <button id="backwardBtn">B</button>
-            <button id="forwardBtn">F</button>
-        </div>
         <div id="setting">
             <button id="saveBtn">S</button>
         </div>
@@ -71,7 +62,11 @@
                 <div class="chatArea">
                     <ul class="messages"></ul>
                 </div>
-                <input class="inputMessage" placeholder="Type here..." />
+				<div class="chatInput">
+					<input class="inputMessage" placeholder="Type here..." />
+					<button type="button">SEND</button>
+				</div>
+                
             </div>
         </section>
         <section id="canvasArea">
@@ -79,20 +74,16 @@
 				<li id="plusTab">
 					<button class="tabBtn" value="+">+</button>
 					<div id="addTab">
-						<button value="whiteBoard">White board</button>
-						<button value="textbook">교재</button>
+						<button value="whiteBoard">whiteboard</button>
+						<button value="textbook">교 재</button>
 						<button value="shareScreen">화면공유</button>
 					</div>
 				</li>
 			</ul>
-			<div id="tabs">
-			
-			</div>
+			<div id="tabs"></div>
         </section>
     </main>
-    <footer>
-        <span>Copyright Nexcos Co., Ltd. All rights reserved</span>
-    </footer>
+    <footer><span>Copyright Nexcos Co., Ltd. All rights reserved</span></footer>
 	<script id="tabBtnTemplate" type="x-tmpl-mustache">
 		<li><button class="tabBtn" value={{tabCount}}>tab{{tabCount}}</button>
 	</script>

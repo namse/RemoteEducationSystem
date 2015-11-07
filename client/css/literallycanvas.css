@@ -11,7 +11,6 @@
     -ms-user-select: none;
     -ms-touch-action: none;
     user-select: none;
-	border: 1px solid #aaa;
 	z-index: 100;
 }
 
@@ -37,26 +36,20 @@
 }
 
 .literally .button-style-1.selected:not(.disabled) {
-    background-color: #a1d9fe
+    background-color: #a1d9fe;
 }
 
 .literally .button-style-1:hover:not(.disabled) {
-    border-color: #a1d9fe
+    border-color: #a1d9fe;
 }
 
 .literally .button-style-1.disabled {
     cursor: default;
-    opacity: 0.3
+    opacity: 0.3;
 }
 
 .literally.toolbar-at-top .lc-drawing {
-    bottom: 0;
-    top: 31px
-}
-
-.literally.toolbar-at-top .lc-options {
-    top: 0;
-    border-bottom: 1px solid #555
+    top: 0px;
 }
 
 .literally.toolbar-at-bottom .lc-drawing {
@@ -66,7 +59,6 @@
 
 .literally.toolbar-at-bottom .lc-options {
     bottom: 0;
-    border-top: 1px solid #555
 }
 
 .literally.toolbar-hidden .lc-drawing {
@@ -81,20 +73,19 @@
     display: none
 }
 
-
-
 .literally .lc-picker {
     top: 0;
-    left: 0;
+    right: -73px;
     bottom: 0;
-    width: 61px;
-    background-color: #e6e6e6
+    width: 60px;
+    background-color: transparent;
 }
 
 .literally .lc-drawing {
-    right: 0;
-    left: 61px;
-    cursor: default
+	left: 0px;
+	cursor: default;
+	width: 100%;
+	height: 100%;
 }
 
 .literally .lc-drawing>* {
@@ -120,7 +111,6 @@
 
 .literally .lc-picker {
     z-index: 2;
-    border-right: 1px solid #555
 }
 
 .literally .lc-picker .toolbar-button {
@@ -131,7 +121,7 @@
     padding: 0;
     cursor: pointer;
     text-align: center;
-    border: 2px solid transparent;
+    border: 1px solid #bbb;
     border-radius: 3px
 }
 
@@ -242,8 +232,8 @@
     z-index: 1;
     background-color: white;
     border: 1px solid #555;
-    left: 60px;
-    bottom: 31px
+    left: -222px;
+    bottom: 31px;
 }
 
 .literally .color-picker-popup .color-row {
@@ -270,7 +260,7 @@
 
 .literally .horz-toolbar {
     height: 31px;
-    background-color: #e6e6e6
+    background-color: transparent;
 }
 
 .literally .horz-toolbar label {
@@ -331,9 +321,10 @@
 }
 
 .literally .lc-options {
-    z-index: 1;
-    right: 0;
-    left: 61px
+    z-index: 3;
+    right: -73px;
+	top: 370px;
+	width: 60px;
 }
 
 .literally .lc-options .lc-font-settings {

@@ -1,3 +1,4 @@
+/* CSS RESET */
 html,
 body {
     width: 100%;
@@ -207,8 +208,12 @@ nav #setting {
     float: right;
 }
 
+/* main */
 main {
-    height: 100%;
+	position: relative;
+	top: 77px;
+	width: 100%;
+	height: 773px;
 }
 
 #indexPage #classBtn {
@@ -226,32 +231,35 @@ main > section {
     position: relative;
     float: left;
     box-sizing: border-box;
-    padding-top: 105px;
-    padding-bottom: 45px;
 }
+
 
 #communicationArea {
-    width: 300px;
+    width: 260px;
     height: 100%;
-    padding-left: 15px;
-    padding-right: 5px;
+	padding-left: 12px;
+	padding-right: 6px;
+}
+#communicationArea > div {
+	border: 1px solid #b8b8b8;
+	border-radius: 6px;
+	margin-top: 10px;
+	background-color: white;
+	box-sizing: border-box;
 }
 
+/* 화상 비디오 */
 #communicationArea #videos {
     position: relative;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    width: 280px;
-    height: 210px;
-    border-radius: 8px;
-    overflow-y: auto;
-    border: 1px solid #aaa;
+    width: 100%;
+    height: 202px;
+	overflow-y: auto;
 }
 
 #communicationArea #videos video {
     float: left;
-    width: 140px;
-    height: 105px;
+    width: 120px;
+    height: 100px;
 }
 
 #communicationArea #localVideo {
@@ -261,50 +269,47 @@ main > section {
     z-index: 100;
 }
 
+/* 접속자 리스트 */
+#communicationArea #users {
+    width: 100%;
+    height: 222px;
+	padding: 5px;
+	font-weight: 600;
+}
 #communicationArea .moduleHead {
     width: 100%;
-    height: 42px;
-    padding: 0 15px;
-    line-height: 40px;
-    border-bottom: 1px solid #ddd;
+    height: 38px;
+    padding: 0 10px;
+    line-height: 38px;
     box-sizing: border-box;
+	font-size: 14px;
+	color: #666;
+	font-weight: 600;
 }
-
-#communicationArea #users {
-    width: 280px;
-    height: 20%;
-    background-color: white;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #aaa;
-}
-
 #communicationArea #users ul {
-    padding: 0 15px;
+    border-top: 1px solid #b8b8b8;
+	padding: 0 10px;
+	font-size: 12px;
+	height: 170px;
+	overflow-y: auto;
 }
-
 #communicationArea #users li {
-    height: 28px;
-    line-height: 26px;
-    overflow-y: auto;
+	height: 40px;
+	line-height: 40px;
+	color: #666;
 }
 
+/* 채팅 */
 #communicationArea .chat {
-    position: relative;
-    width: 280px;
-    height: 40%;
-    background-color: white;
-    border: 1px solid #aaa;
-    border-radius: 8px;
+	width: 100%;
+	height: 290px;
+	padding: 2px 7px;
 }
-
-#communicationArea .chat .chatArea {}
-
 #communicationArea .chat .messages {
-    height: 155px;
-	margin: 0;
-    overflow-y: auto;
-    padding: 10px 20px 10px 20px;
+	height: 180px;
+	overflow-y: auto;
+	padding: 12px 5px 12px 5px;
+	border: 1px solid #b8b8b8;
 }
 
 #communicationArea .chat .username {
@@ -314,55 +319,63 @@ main > section {
     padding-right: 15px;
     text-align: right;
 }
-
+#communicationArea .chat .chatInput {
+	width: 100%;
+	padding-top: 8px;
+}
 #communicationArea .chat .inputMessage {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 30px;
+	width: 170px;
+	height: 25px;
+	border-radius: 2px;
+	border: 1px solid #ccc;
+	text-indent: 10px;
+}
+#communicationArea .chat .chatInput button {
+	width: 48px;
+	height: 25px;
+	background-color: #189159;
+	color: white;
+	font-size: 10px;
+	font-weight: 600;
+	border-radius: 3px;
+	box-shadow: inset 1px 1px 1px #ddd;
 }
 
 #canvasArea {
-    width: 704px;
+    width: 930px;
     height: 100%;
-    padding-left: 7px;
-    padding-right: 15px;
+	padding: 10px 0 0 6px;
 }
-
 #canvasArea #tabNav {
 	position: relative;
 	width: 100%;
-	height: 30px;
+	height: 22px;
 	z-index: 300;
 }
-
 #canvasArea #tabNav li {
     float: left;
     width: 10%;
 }
-
 #canvasArea #tabNav .tabBtn {
     width: 100%;
-    height: 30px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    background-color: #ddd;
-    border: 1px solid #999;
+    height: 22px;
+    line-height: 22px;
+	border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    background-color: #fff;
+    border: 1px solid #b8b8b8;
     border-bottom: none;
-    line-height: 30px;
+    color: #555;
 }
-
 #canvasArea #tabNav .tabBtn:hover {
     background-color: #bbb;
 }
-
 #canvasArea #addTab {
-    width: 100px;
+    width: 92px;
     height: 107px;
     border: 1px solid #999;
-    border-radius: 5px;
-    display: none;
-    background-color: #ccc;
+    background-color: #fff;
+	display: none;
 }
 
 #canvasArea #addTab button {
@@ -370,24 +383,25 @@ main > section {
     width: 80%;
     height: 25px;
     background-color: #43A047;
+	font-size: 12px;
     color: white;
 }
 
 #canvasArea #tabs {
     position: relative;
+	top: -1px;
     width: 100%;
-    height: 595px;
-    background-color: #ddd;
-    border: 1px solid #999;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border-top-right-radius: 8px;
+    height: 710px;
+    background-color: #fff;
+    border: 1px solid #b8b8b8;
+	padding: 5px;
+	box-sizing: border-box;
 }
 
 #canvasArea #tabs .tab {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 912px;
+    height: 698px;
 }
 #canvasArea .tab .layerControl {
 	position: absolute;
@@ -400,22 +414,26 @@ main > section {
 	margin-left: 10px;
 	width: 70%;
 	height: 25px;
+	text-indent: 10px;
 }
 #canvasArea .tab .layerControl button {
 	float: left;
 	margin: 0px 15px;
-	width; 15%;
+	width: 80px;
 	height: 25px;
-	background-color: #43A047;
-	border-radius: 5px;
-	font-size: 15px;
 	color: white;
+	background-color: #189159;
+	font-size: 12px;
+	font-weight: 600;
+	border-radius: 3px;
+	box-shadow: inset 1px 1px 1px #ddd;
 }
 #canvasArea .textbook .iframeContainer {
     position: absolute;
     width: 100%;
     height: 100%;
 	z-index: 50;
+	overflow: auto;
 }
 #canvasArea .textbook .iframeContainer iframe {
 	width: 100%;
@@ -425,13 +443,12 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 30px;
+    height: 25px;
     text-align: center;
-    background-color: #ddd;
     line-height: 28px;
 }
 
 footer span {
-    font-size: 12px;
+    font-size: 10px;
     color: #aaa;
 }
