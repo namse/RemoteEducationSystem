@@ -436,6 +436,8 @@ var TAB = {
 		// addTab eventListener
 		$("#addTab").on("click", function(event) {
 			var addButton = $(event.target);
+			if (addButton.val() == "") return;
+			
 			this.addTab(addButton.val());
 			$("#addTab").css("display", "none");
 			$("#addTab").toggleClass("on");
