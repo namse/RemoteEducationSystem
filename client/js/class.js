@@ -460,8 +460,8 @@ var TAB = {
     },
     selectTab: function(tabNumber) {
         //tab
-        $(".tab").removeClass("on");
-        $("#tab" + tabNumber).addClass("on");
+        $(".tab").css("display", "none");
+        $("#tab" + tabNumber).css("display", "block");
 
         //tab button
         $(".tabBtn").css("background-color", "#ddd");
