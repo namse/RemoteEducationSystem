@@ -138,7 +138,7 @@ function loadChatting() {
 }
 
 
-$window.keydown(function(event) {
+$inputMessage.keydown(function(event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
         $inputMessage.focus();
@@ -372,8 +372,6 @@ var LCANVAS = {
 
 
     },
-
-
     getCustomCanvasTools: function(LC) {
         var defaultTools = LC.defaultTools.slice(0); // copy
         console.log(defaultTools);
@@ -440,104 +438,115 @@ var LCANVAS = {
 
 
 var TAB = {
-    tabCount: 0,
-    tabType: ["whiteBoard", "textbook", "shareScreen"],
-    init: function() {
-        this.tabControl();
-    },
-    currentTab: 0,
-    tabControl: function() {
-        // tabNav eventListener
-        $("#tabNav").on("click", ".tabBtn", function(event) {
-            var tabButton = $(event.target);
-            var currentTab = tabButton.val();
-            if (currentTab === "+") {
-                this.tabCount++;
-                if ($("#addTab").hasClass("on")) {
-                    $("#addTab").css("display", "none");
-                } else {
-                    $("#addTab").css("display", "block");
-                }
-                $("#addTab").toggleClass("on");
-                return;
-            }
-
-            this.selectTab(currentTab);
-        }.bind(this));
-
-        // addTab eventListener
-        $("#addTab").on("click", function(event) {
-            var addButton = $(event.target);
-            this.addTab(addButton.val());
-            $("#addTab").css("display", "none");
-            $("#addTab").toggleClass("on");
-
-            // tab count check
-            if ($("#tabNav").children().length >= 11) {
-                $("#plusTab").css("display", "none");
-            } else {
-                $("#plusTab").css("display", "block");
-            }
-        }.bind(this));
-    },
-    selectTab: function(tabNumber) {
+	tabCount : 0,
+	tabType : ["whiteBoard", "textbook", "shareScreen"],
+	init : function() {
+		this.tabControl();
+	},
+	currentTab : null,
+	tabControl : function() {
+		// tabNav eventListener
+		$("#tabNav").on("click", ".tabBtn", function(event) {
+			var tabButton = $(event.target);
+			var currentTab = tabButton.val(); 
+			if (currentTab === "+") {
+				this.tabCount++;
+				if ($("#addTab").hasClass("on")) {
+					$("#addTab").css("display", "none");
+				} else {
+					$("#addTab").css("display", "block");
+				}
+				$("#addTab").toggleClass("on");
+				return;
+			}
+			
+			this.selectTab(currentTab);
+		}.bind(this));
+		
+		// addTab eventListener
+		$("#addTab").on("click", function(event) {
+			var addButton = $(event.target);
+			if (addButton.val() == "") return;
+			
+			this.addTab(addButton.val());
+			$("#addTab").css("display", "none");
+			$("#addTab").toggleClass("on");
+			
+			// tab count check
+			if ($("#tabNav").children().length >= 11) {
+				$("#plusTab").css("display", "none");
+			} else {
+				$("#plusTab").css("display", "block");
+			}
+		}.bind(this));
+	},
+	selectTab : function(tabNumber) {
         //tab
         $(".tab").css("display", "none");
         $("#tab" + tabNumber).css("display", "block");
-
-        //tab button
-        $(".tabBtn").css("background-color", "#ddd");
-        $(".tabBtn").eq(parseInt(tabNumber) - 1).css("background-color", "#bbb");
-        this.currentTab = tabNumber;
-    },
-    addTab: function(tabTemplate) {
-        // add tab
-        var template = $("#" + tabTemplate + "Template").html();
-        Mustache.parse(template);
-        var newTab = Mustache.render(template, {
-            tabCount: this.tabCount
-        });
-        $("#tabs").append(newTab);
-
-        // add canvas
-        if (tabTemplate === "whiteBoard") {
-            LCANVAS.init($("#lcanvas" + this.tabCount));
-        } else if (tabTemplate === "textbook") {
-            LCANVAS.init($("#lcanvas" + this.tabCount));
-        }
-
-        // add tab button
-        var tabBtn = $("#tabBtnTemplate").html();
-        Mustache.parse(tabBtn);
-        var newTabBtn = Mustache.render(tabBtn, {
-            tabCount: this.tabCount
-        });
-        $("#plusTab").before(newTabBtn);
-
-        // select new tab
-        this.selectTab(this.tabCount);
-    }
+		
+		//tab button
+		$(".tabBtn").css("background-color", "#ddd");
+		$(".tabBtn").eq(parseInt(tabNumber) - 1).css("background-color", "#bbb");
+		this.currentTab = "tab" + tabNumber;
+	},
+	addTab : function(tabTemplate) {
+		// add tab
+		var template = $("#" + tabTemplate + "Template").html();
+		Mustache.parse(template);
+		var newTab = Mustache.render(template, {
+			tabCount: this.tabCount
+		});
+		$("#tabs").append(newTab);
+		
+		LCANVAS.init($("#lcanvas" + this.tabCount));
+		
+		// add tab button
+		this.addTabBnt();
+		
+		// select new tab
+		this.selectTab(this.tabCount);
+	},
+	addTabBnt : function() {
+		var tabBtn = $("#tabBtnTemplate").html();
+		Mustache.parse(tabBtn);
+		var newTabBtn = Mustache.render(tabBtn, {
+			tabCount: this.tabCount
+		});
+		$("#plusTab").before(newTabBtn);
+	}
 }
 
 var TEXTBOOK = {
-    init: function() {
-        $("#tabs").on("click", ".textbookControl", this.textbookHandler.bind(this));
-    },
-    textbookHandler: function(event) {
-        var button = $(event.target).attr("class");
-        if (button === "getTextbook") {
-            this.getTextBook();
-        } else if (button === "changeLayer") {
-            this.changeLayer();
-        }
-    },
-    getTextBook: function() {
-        console.log("GT");
-    },
-    changeLayer: function() {
-        console.log("CL");
-
-    }
+	init : function() {
+		$("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
+	},
+	textbookHandler : function(event) {
+		var button = $(event.target).attr("class");
+		var layerControl = $(event.currentTarget);
+		if (button === "getTextbook") {
+			var url = layerControl.find("input").val();
+			if (url) {
+				var iframe = layerControl.parents().find("iframe");
+				this.getTextBook(iframe, url);
+			} else {
+				alert("url을 입력해주세요.");
+			}
+		} else if (button === "changeLayer") {
+			this.changeLayer(layerControl);
+		}
+	},
+	getTextBook : function(iframe, url) {
+		iframe.attr("src", url);
+	},
+	changeLayer : function(layerControl) {
+		var canvas = layerControl.parents().find(".literally");
+		if (parseInt(canvas.css("z-index")) > 50) {
+			canvas.css("z-index", "0");
+		} else {
+			canvas.css("z-index", "100");
+		}
+	}
 }
 
 // Service code
