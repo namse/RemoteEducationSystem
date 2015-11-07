@@ -2,7 +2,7 @@ var socketIO = require('socket.io'),
     uuid = require('node-uuid'),
     crypto = require('crypto');
 
-module.exports = function (server, config) {
+module.exports = function(server, config) {
     var io = socketIO.listen(server);
 
     if (config.logLevel) {
@@ -10,7 +10,9 @@ module.exports = function (server, config) {
         io.set('log level', config.logLevel);
     }
 
-    io.sockets.on('connection', function (client) {
+    io.sockets.on('connection', function(client) {
+        console.log("client : " +
+            client.id);
         client.resources = {
             screen: false,
             video: true,
@@ -18,21 +20,23 @@ module.exports = function (server, config) {
         };
 
         // pass a message to another id
-        client.on('message', function (details) {
+        client.on('message', function(details) {
+            console.log("m : " + JSON.stringify(details) + "\n");
             if (!details) return;
 
-            var otherClient = io.sockets.sockets[details.to];
+            var otherClient = io.sockets.adapter.nsp.connected[details.to];
+            console.log("other client : " + otherClient);
             if (!otherClient) return;
 
             details.from = client.id;
             otherClient.emit('message', details);
         });
 
-        client.on('shareScreen', function () {
+        client.on('shareScreen', function() {
             client.resources.screen = true;
         });
 
-        client.on('unshareScreen', function (type) {
+        client.on('unshareScreen', function(type) {
             client.resources.screen = false;
             removeFeed('screen');
         });
@@ -64,29 +68,34 @@ module.exports = function (server, config) {
             // leave any existing rooms
             removeFeed();
             safeCb(cb)(null, describeRoom(name));
-            client.join(name);
+            client.join(name, function(err) {
+                console.log("is join successful?");
+                console.log(err);
+                console.log(client.rooms);
+            });
             client.room = name;
         }
 
         // we don't want to pass "leave" directly because the
         // event type string of "socket end" gets passed too.
-        client.on('disconnect', function () {
+        client.on('disconnect', function() {
+            console.log("all Rooms : " + client.rooms + '\n');
             removeFeed();
         });
-        client.on('leave', function () {
+        client.on('leave', function() {
             removeFeed();
         });
 
-        client.on('create', function (name, cb) {
+        client.on('create', function(name, cb) {
             if (arguments.length == 2) {
-                cb = (typeof cb == 'function') ? cb : function () {};
+                cb = (typeof cb == 'function') ? cb : function() {};
                 name = name || uuid();
             } else {
                 cb = name;
                 name = uuid();
             }
             // check if exists
-            if (io.sockets.clients(name).length) {
+            if (io.sockets.adapter.rooms[name]) {
                 safeCb(cb)('taken');
             } else {
                 join(name);
@@ -96,9 +105,9 @@ module.exports = function (server, config) {
 
         // support for logging full webrtc traces to stdout
         // useful for large-scale error monitoring
-        client.on('trace', function (data) {
+        client.on('trace', function(data) {
             console.log('trace', JSON.stringify(
-            [data.type, data.session, data.prefix, data.peer, data.time, data.value]
+                [data.type, data.session, data.prefix, data.peer, data.time, data.value]
             ));
         });
 
@@ -109,7 +118,7 @@ module.exports = function (server, config) {
         // create shared secret nonces for TURN authentication
         // the process is described in draft-uberti-behave-turn-rest
         var credentials = [];
-        config.turnservers.forEach(function (server) {
+        config.turnservers.forEach(function(server) {
             var hmac = crypto.createHmac('sha1', server.secret);
             // default to 86400 seconds timeout unless specified
             var username = Math.floor(new Date().getTime() / 1000) + (server.expiry || 86400) + "";
@@ -125,26 +134,43 @@ module.exports = function (server, config) {
 
 
     function describeRoom(name) {
-        var clients = io.sockets.clients(name);
+        var room = io.sockets.adapter.rooms[name];
+        console.log("droom : " +
+            room);
         var result = {
             clients: {}
         };
-        clients.forEach(function (client) {
-            result.clients[client.id] = client.resources;
-        });
+        if (room) {
+            for (var id in room) {
+                console.log("dID = " + id);
+                var client = io.sockets.adapter.nsp.connected[id];
+                result.clients[id] = client.resources;
+            }
+        }
+        console.log("result : " + result + "\n\n");
         return result;
     }
 
     function clientsInRoom(name) {
-        return io.sockets.clients(name).length;
-    }
+        var room = io.sockets.adapter.rooms[name];
+        console.log("room : " + room);
+        if (room) {
+            var length = Object.keys(room).length;
+            console.log("length : " + length + '\n');
+            return length;
+        } else {
+            console.log("length : 0\n");
 
+            return 0;
+        }
+
+    }
 };
 
 function safeCb(cb) {
     if (typeof cb === 'function') {
         return cb;
     } else {
-        return function () {};
+        return function() {};
     }
 }

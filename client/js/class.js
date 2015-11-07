@@ -87,6 +87,12 @@ function loadWebRTC() {
         // DetectRTC.isVideoSupportsStreamCapturing
 
         // DetectRTC.DetectLocalIPAddress(callback)
+        var webRTCSocket = io.connect(webRTCSignalServerURL);
+        //webRTCSocket.on('connect', function() {
+
+        webRTCSocket.getSessionid = function() {
+            return webRTCSocket.id;
+        };
 
         webRTC = new SimpleWebRTC({
             // the id/element dom element that will hold "our" video
@@ -96,11 +102,13 @@ function loadWebRTC() {
             // immediately ask for camera access
             autoRequestMedia: true,
             url: webRTCSignalServerURL,
+            connection: webRTCSocket,
             media: {
                 audio: DetectRTC.hasMicrophone,
                 video: DetectRTC.hasWebcam
             }
         });
+
 
         // we have to wait until it's ready
         webRTC.on('readyToCall', function() {
@@ -109,6 +117,7 @@ function loadWebRTC() {
 
             initButtons();
         });
+        //});
     });
 
 
@@ -316,6 +325,8 @@ var LCANVAS = {
                     // student can't use canvas!
                     // disable literally canvas.
                     canvasDiv.css("pointer-events", "none");
+
+                    // TODO : 탭 확인해서 셋팅되도록 해야함.
                     chattingSocket.on('draw', function(data) {
 
                         // packet : 'draw'
@@ -337,6 +348,24 @@ var LCANVAS = {
                         } else {
                             console.log(data);
                         }
+                    });
+
+                    ss(chattingSocket).on('background', function(stream, data) {
+                        console.log(stream);
+
+                        var backgroundImage = new Image()
+                        backgroundImage.src = 'data:image/jpeg;base64,' + stream;
+
+                        var currentLC = LCANVAS.lcanvases["lcanvas" + TAB.currentTab];
+                        currentLC.backgroundShapes = [LC.createShape(
+                            'Image', {
+                                x: 20,
+                                y: 20,
+                                image: backgroundImage,
+                                scale: 2
+                            })];
+                        currentLC.repaintLayer('background', false);
+
                     });
                 }
                 lc_ = lc;
