@@ -132,7 +132,7 @@ function loadChatting() {
 }
 
 
-$window.keydown(function(event) {
+$inputMessage.keydown(function(event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
         $inputMessage.focus();
@@ -344,10 +344,8 @@ var LCANVAS = {
         }
 		this.lcanvases[canvasDiv.attr("id")] = canvasDiv;
     },
-
-
     getCustomCanvasTools: function(LC) {
-        var defaultTools = LC.defaultTools;
+		var defaultTools = LC.defaultTools;
 
         for (var i = 0; i < defaultTools.length; i++) {
             var defaultTool = defaultTools[i];
@@ -469,43 +467,48 @@ var TAB = {
 		});
 		$("#tabs").append(newTab);
 		
-		// add canvas
-		if (tabTemplate === "whiteBoard") {
-			LCANVAS.init($("#lcanvas" + this.tabCount));
-		} else if (tabTemplate === "textbook") {
-			LCANVAS.init($("#lcanvas" + this.tabCount));
-		}
+		LCANVAS.init($("#lcanvas" + this.tabCount));
 		
 		// add tab button
+		this.addTabBnt();
+		
+		// select new tab
+		this.selectTab(this.tabCount);
+	},
+	addTabBnt : function() {
 		var tabBtn = $("#tabBtnTemplate").html();
 		Mustache.parse(tabBtn);
 		var newTabBtn = Mustache.render(tabBtn, {
 			tabCount: this.tabCount
 		});
 		$("#plusTab").before(newTabBtn);
-		
-		// select new tab
-		this.selectTab(this.tabCount);
 	}
 }
 
 var TEXTBOOK = {
 	init : function() {
-		$("#tabs").on("click", ".textbookControl", this.textbookHandler.bind(this));
+		$("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
 	},
 	textbookHandler : function(event) {
 		var button = $(event.target).attr("class");
+		var layerControl = $(event.currentTarget);
 		if (button === "getTextbook") {
-			this.getTextBook();
+			var url = layerControl.find("input").val();
+			if (url) {
+				var iframe = layerControl.parents().find("iframe");
+				this.getTextBook(iframe, url);
+			} else {
+				alert("url을 입력해주세요.");
+			}
 		} else if (button === "changeLayer") {
-			this.changeLayer();
+			this.changeLayer(layerControl);
 		}
 	},
-	getTextBook : function() {
-		console.log("GT");
+	getTextBook : function(iframe, url) {
+		iframe.attr("src", url);
 	},
-	changeLayer : function() {
-		console.log("CL");
+	changeLayer : function(layerControl) {
+		//layerControl.siblings().find("")
 
 	}
 }
