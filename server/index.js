@@ -34,9 +34,16 @@ var io = socketio.listen(server); // io for chatting
 
 server.listen(app.get('port'));
 
-
+//temp
+var socketA, socketB;
+socketA = socketB = null;
 
 io.on('connection', function(socket) {
+    if (socketA == null) {
+        socketA = socket;
+    } else {
+        socketB = socket;
+    }
     socket.on('chat', function(msg) {
         console.log(msg);
         socket.broadcast.emit('chat', msg);
@@ -57,7 +64,23 @@ io.on('connection', function(socket) {
     });
     ss(socket).on('background', function(stream, data) {
         console.log(data);
-        console.log(data);
+        var targetSocket = null;
+        if (socket == socketA) {
+            targetSocket = socketB;
+        } else if (socket == socketB) {
+            targetSocket = socketA;
+        }
+        if (targetSocket != null) {
+            ss(targetSocket).emit('background', stream);
+        }
+    });
+
+    socket.on('disconnect', function() {
+        if (socketA == socket) {
+            socketA = null;
+        } else if (socketB == socket) {
+            socketB = null;
+        }
     });
 });
 
