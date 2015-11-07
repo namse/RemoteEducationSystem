@@ -413,6 +413,7 @@ var TAB = {
 	init : function() {
 		this.tabControl();
 	},
+	currentTab : null,
 	tabControl : function() {
 		// tabNav eventListener
 		$("#tabNav").on("click", ".tabBtn", function(event) {
@@ -448,13 +449,14 @@ var TAB = {
 		}.bind(this));
 	},
 	selectTab : function(tabNumber) {
-		//tab 
-		$(".tab").css("display", "none");
-		$("#tab"+tabNumber).css("display", "block");
+		//tab
+		$(".tab").removeClass("on");
+		$("#tab" + tabNumber).addClass("on");
 		
 		//tab button
 		$(".tabBtn").css("background-color", "#ddd");
 		$(".tabBtn").eq(parseInt(tabNumber) - 1).css("background-color", "#bbb");
+		this.currentTab = "tab" + tabNumber;
 	},
 	addTab : function(tabTemplate) {
 		// add tab
