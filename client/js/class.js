@@ -87,6 +87,12 @@ function loadWebRTC() {
         // DetectRTC.isVideoSupportsStreamCapturing
 
         // DetectRTC.DetectLocalIPAddress(callback)
+        var webRTCSocket = io.connect(webRTCSignalServerURL);
+        //webRTCSocket.on('connect', function() {
+
+        webRTCSocket.getSessionid = function() {
+            return webRTCSocket.id;
+        };
 
         webRTC = new SimpleWebRTC({
             // the id/element dom element that will hold "our" video
@@ -96,11 +102,13 @@ function loadWebRTC() {
             // immediately ask for camera access
             autoRequestMedia: true,
             url: webRTCSignalServerURL,
+            connection: webRTCSocket,
             media: {
                 audio: DetectRTC.hasMicrophone,
                 video: DetectRTC.hasWebcam
             }
         });
+
 
         // we have to wait until it's ready
         webRTC.on('readyToCall', function() {
@@ -109,6 +117,7 @@ function loadWebRTC() {
 
             initButtons();
         });
+        //});
     });
 
 
@@ -316,6 +325,8 @@ var LCANVAS = {
                     // student can't use canvas!
                     // disable literally canvas.
                     canvasDiv.css("pointer-events", "none");
+
+                    // TODO : 탭 확인해서 셋팅되도록 해야함.
                     chattingSocket.on('draw', function(data) {
 
                         // packet : 'draw'
@@ -334,6 +345,18 @@ var LCANVAS = {
                             lc.undo();
                         } else if (data.type == 'redo') {
                             lc.redo();
+                        } else if (data.type == 'background') {
+                            var image = new Image()
+                            image.src = data.image;
+
+                            lc.backgroundShapes = [LC.createShape(
+                                'Image', {
+                                    x: 20,
+                                    y: 20,
+                                    image: image,
+                                    scale: 2
+                                })];
+                            lc.repaintLayer('background', false);
                         } else {
                             console.log(data);
                         }
@@ -390,6 +413,12 @@ var LCANVAS = {
                 var backgroundImage = new Image()
                 backgroundImage.src = e.target.result;
 
+                var packet = {
+                    type: 'background',
+                    image: e.target.result
+                };
+                chattingSocket.emit('draw', packet);
+
                 var currentLC = LCANVAS.lcanvases["lcanvas" + TAB.currentTab];
                 currentLC.backgroundShapes = [LC.createShape(
                     'Image', {
@@ -403,13 +432,6 @@ var LCANVAS = {
                     currentLC.setTool(prevCanvasTool);
             }
             reader.readAsDataURL(this.files[0]);
-
-            var stream = ss.createStream();
-            // upload a file to the server. 
-            ss(chattingSocket).emit('background', stream, {
-                size: this.files[0].size
-            });
-            ss.createBlobReadStream(this.files[0]).pipe(stream);
         }
     }
 }
@@ -541,7 +563,6 @@ $(window).on("load", function() {
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
 
-    ss.forceBase64 = true;
 });
 
 $(document).on("ready", function() {

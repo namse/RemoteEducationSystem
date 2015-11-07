@@ -6,11 +6,10 @@ var url = require('url');
 var socketio = require('socket.io');
 var fs = require('fs');
 var signal = require('./signal/server');
-var ss = require('socket.io-stream');
 var credentials = {
-    key: fs.readFileSync('./ssl/server.key'),
-    cert: fs.readFileSync('./ssl/server.crt'),
-    ca: fs.readFileSync('./ssl/ca.crt'),
+    key: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.private.pem'),
+    cert: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.public.pem'),
+    ca: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.pfx'),
     requestCert: true,
     rejectUnauthorized: false
 };
@@ -39,6 +38,7 @@ var socketA, socketB;
 socketA = socketB = null;
 
 io.on('connection', function(socket) {
+    console.log(socket.id);
     if (socketA == null) {
         socketA = socket;
     } else {
@@ -57,13 +57,6 @@ io.on('connection', function(socket) {
         // -- content depended by type
 
         console.log(data);
-        socket.broadcast.emit('draw', data);
-    });
-    socket.on('disconnect', function() {
-
-    });
-    ss(socket).on('background', function(stream, data) {
-        console.log(data);
         var targetSocket = null;
         if (socket == socketA) {
             targetSocket = socketB;
@@ -71,8 +64,12 @@ io.on('connection', function(socket) {
             targetSocket = socketA;
         }
         if (targetSocket != null) {
-            ss(targetSocket).emit('background', stream);
+            targetSocket.emit('draw', data);
         }
+
+    });
+    socket.on('disconnect', function() {
+
     });
 
     socket.on('disconnect', function() {
