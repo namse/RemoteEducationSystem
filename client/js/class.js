@@ -260,9 +260,8 @@ function initButtons() {
 
 
 var LCANVAS = {
+    lcanvases: {},
     init: function(canvasDiv) {
-
-
         var tools = this.getCustomCanvasTools(LC);
         canvasDiv.literallycanvas({
             imageURLPrefix: '/static/img',
@@ -341,11 +340,13 @@ var LCANVAS = {
                 }
             });
         }
+        this.lcanvases[canvasDiv.attr("id")] = canvasDiv;
     },
 
 
     getCustomCanvasTools: function(LC) {
-        var defaultTools = LC.defaultTools;
+        var defaultTools = LC.defaultTools.slice(0); // copy
+        console.log(defaultTools);
 
         for (var i = 0; i < defaultTools.length; i++) {
             var defaultTool = defaultTools[i];
@@ -408,6 +409,7 @@ var LCANVAS = {
 
 var TAB = {
     tabCount: 0,
+    tabType: ["whiteBoard", "textbook", "shareScreen"],
     init: function() {
         this.tabControl();
     },
@@ -468,7 +470,6 @@ var TAB = {
             LCANVAS.init($("#lcanvas" + this.tabCount));
         } else if (tabTemplate === "textbook") {
             LCANVAS.init($("#lcanvas" + this.tabCount));
-            console.log(newTab);
         }
 
         // add tab button
@@ -481,6 +482,27 @@ var TAB = {
 
         // select new tab
         this.selectTab(this.tabCount);
+    }
+}
+
+var TEXTBOOK = {
+    init: function() {
+        $("#tabs").on("click", ".textbookControl", this.textbookHandler.bind(this));
+    },
+    textbookHandler: function(event) {
+        var button = $(event.target).attr("class");
+        if (button === "getTextbook") {
+            this.getTextBook();
+        } else if (button === "changeLayer") {
+            this.changeLayer();
+        }
+    },
+    getTextBook: function() {
+        console.log("GT");
+    },
+    changeLayer: function() {
+        console.log("CL");
+
     }
 }
 
@@ -497,4 +519,5 @@ $(window).on("load", function() {
 
 $(document).on("ready", function() {
     TAB.init();
+    TEXTBOOK.init();
 });
