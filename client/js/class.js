@@ -4,14 +4,20 @@ var isTeacher;
 var roomID;
 var webRTC;
 var webRTCSignalServerURL;
+var userName;
+
 var chattingServerURL;
 var chattingSocket;
-var userName;
+var stream; // for file transfer
+
 
 var isMuted = false;
 var isCameraPause = false;
 
-var literallyCanvas;
+var literallyCanvas; // instance canvas of current tab
+var prevCanvasTool; // need this per canvas of tab.
+
+var backgroundFileUploadElement;
 
 
 // chatting system
@@ -256,80 +262,148 @@ function initButtons() {
 
 
 var LCANVAS = {
-	init: function(canvasDiv) {
-		canvasDiv.literallycanvas({imageURLPrefix: '/static/img'});
+    init: function(canvasDiv) {
 
-		// if teacher -> send drawing information
-		if (isTeacher) {
-			canvasDiv.on('shapeSave', function(data) {
-				var packet = {
-					type: 'shapeSave',
-					shapeJSON: LC.shapeToJSON(data.shape),
-					previousShapeId: data.previousShapeId
-				};
-				chattingSocket.emit('draw', packet);
-			});
-			canvasDiv.on('clear', function() {
-				var packet = {
-					type: 'clear'
-				};
-				chattingSocket.emit('draw', packet);
-			});
-			canvasDiv.on('undo', function() {
-				var packet = {
-					type: 'undo'
-				};
-				chattingSocket.emit('draw', packet);
-			});
-			canvasDiv.on('redo', function() {
-				var packet = {
-					type: 'redo'
-				};
-				chattingSocket.emit('draw', packet);
-			});
-			canvasDiv.on('pan', function(panData) {
-				var packet = {
-					type: 'pan',
-					x: panData.x,
-					y: panData.y
-				};
-				chattingSocket.emit('draw', packet);
-			});
-			canvasDiv.on('zoom', function(zoomData) {
-				var packet = {
-					type: 'zoom',
-					amount: zoomData.newScale
-				};
-				chattingSocket.emit('draw', packet);
-			});
-		} else { // else -> student -> receive drawing information
-			// student can't use canvas!
-			// disable literally canvas.
-			canvasDiv.css("pointer-events", "none");
-			chattingSocket.on('draw', function(data) {
 
-				// packet : 'draw'
-				// - type
-				// - content that defended on type.
+        var tools = this.getCustomCanvasTools(LC);
+        canvasDiv.literallycanvas({
+            imageURLPrefix: '/static/img',
+            tools: tools,
+            zoomMax: 32,
+            zoomMin: -32
+        });
 
-				if (data.type == 'shapeSave') {
-					canvasDiv.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
-				} else if (data.type == 'pan') {
-					canvasDiv.setPan(data.x, data.y);
-				} else if (data.type == 'zoom') {
-					canvasDiv.setZoom(data.amount);
-				} else if (data.type == 'clear') {
-					canvasDiv.clear();
-				} else if (data.type == 'undo') {
-					canvasDiv.undo();
-				} else if (data.type == 'redo') {
-					canvasDiv.redo();
-				} else {
-					console.log(data);
-				}
-			});
-		}
-	}
+        // if teacher -> send drawing information
+        if (isTeacher) {
+            canvasDiv.on('shapeSave', function(data) {
+                var packet = {
+                    type: 'shapeSave',
+                    shapeJSON: LC.shapeToJSON(data.shape),
+                    previousShapeId: data.previousShapeId
+                };
+                chattingSocket.emit('draw', packet);
+            });
+            canvasDiv.on('clear', function() {
+                var packet = {
+                    type: 'clear'
+                };
+                chattingSocket.emit('draw', packet);
+            });
+            canvasDiv.on('undo', function() {
+                var packet = {
+                    type: 'undo'
+                };
+                chattingSocket.emit('draw', packet);
+            });
+            canvasDiv.on('redo', function() {
+                var packet = {
+                    type: 'redo'
+                };
+                chattingSocket.emit('draw', packet);
+            });
+            canvasDiv.on('pan', function(panData) {
+                var packet = {
+                    type: 'pan',
+                    x: panData.x,
+                    y: panData.y
+                };
+                chattingSocket.emit('draw', packet);
+            });
+            canvasDiv.on('zoom', function(zoomData) {
+                var packet = {
+                    type: 'zoom',
+                    amount: zoomData.newScale
+                };
+                chattingSocket.emit('draw', packet);
+            });
+        } else { // else -> student -> receive drawing information
+            // student can't use canvas!
+            // disable literally canvas.
+            canvasDiv.css("pointer-events", "none");
+            chattingSocket.on('draw', function(data) {
+
+                // packet : 'draw'
+                // - type
+                // - content that defended on type.
+
+                if (data.type == 'shapeSave') {
+                    canvasDiv.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
+                } else if (data.type == 'pan') {
+                    canvasDiv.setPan(data.x, data.y);
+                } else if (data.type == 'zoom') {
+                    canvasDiv.setZoom(data.amount);
+                } else if (data.type == 'clear') {
+                    canvasDiv.clear();
+                } else if (data.type == 'undo') {
+                    canvasDiv.undo();
+                } else if (data.type == 'redo') {
+                    canvasDiv.redo();
+                } else {
+                    console.log(data);
+                }
+            });
+        }
+    },
+
+
+    getCustomCanvasTools: function(LC) {
+        var defaultTools = LC.defaultTools;
+
+        for (var i = 0; i < defaultTools.length; i++) {
+            var defaultTool = defaultTools[i];
+            defaultTool.prototype.willBecomeInactive = function(lc) {
+                prevCanvasTool = this;
+                console.log(prevCanvasTool);
+            }
+        }
+
+        var backgroundImageAddingTool = function(lc) {
+            var self = this;
+            return {
+                usesSimpleAPI: false, // DO NOT FORGET THIS!!!
+                name: 'Background',
+                iconName: 'line',
+                optionsStyle: null,
+
+                didBecomeActive: function(lc) {
+                    backgroundFileUploadElement.click();
+                },
+                willBecomeInactive: function(lc) {
+
+                }
+            }
+        }
+
+        defaultTools.push(backgroundImageAddingTool);
+        return defaultTools;
+    },
+
+    handleBackgroundFiles: function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var backgroundImage = new Image()
+                backgroundImage.src = e.target.result;
+                literallyCanvas.backgroundShapes = [LC.createShape(
+                    'Image', {
+                        x: 20,
+                        y: 20,
+                        image: backgroundImage,
+                        scale: 2
+                    })];
+                literallyCanvas.repaintLayer('background', false);
+                if (prevCanvasTool)
+                    literallyCanvas.setTool(prevCanvasTool);
+            }
+            reader.readAsDataURL(this.files[0]);
+
+            // upload a file to the server. 
+            ss(chattingSocket).emit('background', stream, {
+                size: this.files[0].size
+            });
+            ss.createBlobReadStream(this.files[0]).pipe(stream);
+        }
+    }
 }
 
 
@@ -414,8 +488,15 @@ var TAB = {
 // Service code
 $(window).on("load", function() {
     sendInitPacket();
+
+    backgroundFileUploadElement = document.createElement("INPUT");
+    backgroundFileUploadElement.setAttribute("type", "file");
+    backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
+
+    ss.forceBase64 = true;
+    stream = ss.createStream();
 });
 
 $(document).on("ready", function() {
-	TAB.init();
+    TAB.init();
 });

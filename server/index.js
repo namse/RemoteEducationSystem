@@ -6,6 +6,7 @@ var url = require('url');
 var socketio = require('socket.io');
 var fs = require('fs');
 var signal = require('./signal/server');
+var ss = require('socket.io-stream');
 var credentials = {
     key: fs.readFileSync('./ssl/server.key'),
     cert: fs.readFileSync('./ssl/server.crt'),
@@ -53,6 +54,10 @@ io.on('connection', function(socket) {
     });
     socket.on('disconnect', function() {
 
+    });
+    ss(socket).on('background', function(stream, data) {
+        console.log(data);
+        console.log(data);
     });
 });
 

@@ -1,16 +1,15 @@
 <html>
+
 <head>
     <title>Remote Education System</title>
-	
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
-    
     <link rel="stylesheet" href="/css/style.css">
     <link href="/css/literallycanvas.css" rel="stylesheet">
-	
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+    <script src="/js/socket.io-stream.js"></script>
     <script src="/js/literallycanvas.js"></script>
     <script src="/js/SimpleWebRTC/latest.js"></script>
     <script src="//cdn.webrtc-experiment.com/DetectRTC.js"></script>
@@ -45,10 +44,6 @@
         <div id="canvasControl">
             <button id="backwardBtn">B</button>
             <button id="forwardBtn">F</button>
-            <div class="navSpliter"></div>
-            <button id="documentBtn">D</button>
-            <button id="imageBtn">I</button>
-            <button id="videoBtn">V</button>
         </div>
         <div id="setting">
             <button id="saveBtn">S</button>
@@ -124,4 +119,5 @@
 	</script>
     <script src="/js/class.js"></script>
 </body>
+
 </html>
