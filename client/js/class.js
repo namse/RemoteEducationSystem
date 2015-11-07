@@ -345,27 +345,21 @@ var LCANVAS = {
                             lc.undo();
                         } else if (data.type == 'redo') {
                             lc.redo();
+                        } else if (data.type == 'background') {
+                            var image = new Image()
+                            image.src = data.image;
+
+                            lc.backgroundShapes = [LC.createShape(
+                                'Image', {
+                                    x: 20,
+                                    y: 20,
+                                    image: image,
+                                    scale: 2
+                                })];
+                            lc.repaintLayer('background', false);
                         } else {
                             console.log(data);
                         }
-                    });
-
-                    ss(chattingSocket).on('background', function(stream, data) {
-                        console.log(stream);
-
-                        var backgroundImage = new Image()
-                        backgroundImage.src = 'data:image/jpeg;base64,' + stream;
-
-                        var currentLC = LCANVAS.lcanvases["lcanvas" + TAB.currentTab];
-                        currentLC.backgroundShapes = [LC.createShape(
-                            'Image', {
-                                x: 20,
-                                y: 20,
-                                image: backgroundImage,
-                                scale: 2
-                            })];
-                        currentLC.repaintLayer('background', false);
-
                     });
                 }
                 lc_ = lc;
@@ -421,6 +415,12 @@ var LCANVAS = {
                 var backgroundImage = new Image()
                 backgroundImage.src = e.target.result;
 
+                var packet = {
+                    type: 'background',
+                    image: e.target.result
+                };
+                chattingSocket.emit('draw', packet);
+
                 var currentLC = LCANVAS.lcanvases["lcanvas" + TAB.currentTab];
                 currentLC.backgroundShapes = [LC.createShape(
                     'Image', {
@@ -434,13 +434,6 @@ var LCANVAS = {
                     currentLC.setTool(prevCanvasTool);
             }
             reader.readAsDataURL(this.files[0]);
-
-            var stream = ss.createStream();
-            // upload a file to the server. 
-            ss(chattingSocket).emit('background', stream, {
-                size: this.files[0].size
-            });
-            ss.createBlobReadStream(this.files[0]).pipe(stream);
         }
     }
 }
@@ -555,7 +548,6 @@ $(window).on("load", function() {
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
 
-    ss.forceBase64 = true;
 });
 
 $(document).on("ready", function() {
