@@ -518,8 +518,12 @@ var TEXTBOOK = {
 		iframe.attr("src", url);
 	},
 	changeLayer : function(layerControl) {
-		//layerControl.siblings().find("")
-
+		var canvas = layerControl.parents().find(".literally");
+		if (parseInt(canvas.css("z-index")) > 50) {
+			canvas.css("z-index", "0");
+		} else {
+			canvas.css("z-index", "100");
+		}
 	}
 }
 
