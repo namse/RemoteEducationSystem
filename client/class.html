@@ -14,6 +14,8 @@
     <script src="/js/literallycanvas.js"></script>
     <script src="/js/SimpleWebRTC/latest.js"></script>
     <script src="//cdn.webrtc-experiment.com/DetectRTC.js"></script>
+	<script src="//cdn.webrtc-experiment.com/getScreenId.js"></script>
+	<script src="//cdn.webrtc-experiment.com/screen.js"></script>
 	<script src="js/mustache.min.js"></script>
 </head>
 
@@ -85,9 +87,9 @@
 						<button value="shareScreen">화면공유</button>
 					</div>
 				</li>
-			</ul>				
+			</ul>
 			<div id="tabs">
-				
+			
 			</div>
         </section>
     </main>
@@ -98,18 +100,25 @@
 		<li><button class="tabBtn" value={{tabCount}}>tab{{tabCount}}</button>
 	</script>
 	<script id="whiteBoardTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabCount}}" class="tab">
+		<div id="tab{{tabCount}}" class="tab whiteBoard">
 			<div id="lcanvas{{tabCount}}"></div>
 		</div>
 	</script>
 	<script id="textbookTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabCount}}" class="tab">
-			
+		<div id="tab{{tabCount}}" class="tab textbook">
+			<div class="iframeContainer">
+				<iframe></iframe>
+			</div>
 			<div id="lcanvas{{tabCount}}"></div>
+			<div class="textbookControl">
+				<input type="text" placeholder="Textbook URL을 입력하세요.">
+				<button class="getURL">가져오기</button>
+				<button class="changeLayer">화면전환</button>
+			</div>
 		</div>
 	</script>
 	<script id="shareScreenTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabCount}}" class="tab">
+		<div id="tab{{tabCount}}" class="tab shareScreen">
 			화면 공유에 필요한 html을 여기에 넣어주세요 :D
 		</div>
 	</script>

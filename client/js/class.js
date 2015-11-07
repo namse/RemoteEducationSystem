@@ -391,8 +391,11 @@ var TAB = {
 		$("#tabs").append(newTab);
 		
 		// add canvas
-		if (tabTemplate === "whiteBoard" || tabTemplate === "textbook") {
+		if (tabTemplate === "whiteBoard") {
 			LCANVAS.init($("#lcanvas" + this.tabCount));
+		} else if (tabTemplate === "textbook") {
+			LCANVAS.init($("#lcanvas" + this.tabCount));
+			console.log(newTab);
 		}
 		
 		// add tab button
