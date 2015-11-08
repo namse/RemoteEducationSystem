@@ -54,7 +54,9 @@ function sendInitPacket() {
 
         loadWebRTC();
         loadChatting();
-    }).fail(function() {
+    }).done(function() {
+		
+	}).fail(function() {
         alert("error");
     });
 }
@@ -588,7 +590,11 @@ var TAB = {
             }
         }.bind(this));
 
-        $("#tabNav").on("click", ".delTab", this.deleteTab.bind(this));
+        $("#tabNav").on("click", ".delTab", function(event) {
+			var tabBnt = $(event.target).parent();
+        	var tabNum = tabBnt.find(".tabBtn").val();
+			this.deleteTab(tabNum);
+		}.bind(this));
     },
     selectTab: function(tabNumber) {
         var captureElement;
@@ -688,19 +694,19 @@ var TAB = {
         });
         $("#plusTab").before(newTabBtn);
     },
-    deleteTab: function(event) {
-        var tabBnt = $(event.target).parent();
-        var tabNum = tabBnt.find(".tabBtn").val();
-        tabBnt.remove();
-        $("#tab" + tabNum).remove();
+    deleteTab: function(tabNumber) {
+        $("#tabBtn" + tabNumber).remove();
+		$("#tab" + tabNumber).remove();
 
         this.tabCount--;
 
         if ($("#tabNav").children().length == 1) {
             return;
-        }
+        } else if ($("#tabNav").children().length == 10) {
+			$("#plusTab").css("display", "block");
+		}
 
-        if (this.currentTab === "tab" + tabNum) {
+        if (this.currentTab === "tab" + tabNumber) {
             this.selectTab($(".tabBtn").eq(0).val());
         }
 
