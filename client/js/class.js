@@ -46,6 +46,7 @@ function sendInitPacket() {
     $.post("init", function(data) {
         console.log(data);
         isTeacher = data.isTeacher;
+        console.log(isTeacher);
         roomID = data.roomID;
         webRTCSignalServerURL = data.webRTCSignalServerURL;
         chattingServerURL = data.chattingServerURL;
@@ -248,7 +249,6 @@ function cleanInput(input) {
     return $('<div/>').text(input).text();
 }
 
-
 function initButtons() {
     $("#muteBtn").click(function() {
         isMuted = !isMuted;
@@ -267,43 +267,93 @@ function initButtons() {
     });
 }
 
+var MENU = {
+    isMuted: false,
+    isCameraPause: false,
+    init: function() {
+        $("#changeLayer").on("click", this.layerControl.bind(this));
+    },
+    soundControl: function() {
+
+    },
+    cameraControl: function() {
+
+    },
+    layerControl: function() {
+        var canvas = $("#" + TAB.currentTab).find(".literally");
+        if (canvas.css("pointer-events") != "none") {
+            canvas.css("pointer-events", "none");
+        } else {
+            canvas.css("pointer-events", "auto");
+        }
+    }
+}
+
+function getClouser(element) {
+    function func() {
+        CAPTURE.onTick(element);
+    }
+    return func;
+}
 
 var CAPTURE = {
 
-    screenCapturePeriod: 200; //ms
-    capturer: {}, // key : element, value : timer
+    screenCapturePeriod: 5000, //ms
+    capturer: {}, // key : element(dom), value : timer
 
-    init: function(element) {
-        var timer = $.timer(function() {
-            onTick(element);
-        }, this.screenCapturePeriod, true);
-        capturer[element] = timer;
+    run: function(element) {
+        if (element) {
+            var timer = this.capturer[element];
+            if (!timer) {
+                var warp = function() {
+                    var element_ = element;
+                    return function() {
+                        CAPTURE.onTick(element_);
+                    }
+                };
+                var func = getClouser(element);
+                timer = setInterval(func, this.screenCapturePeriod);
+                this.capturer[element] = timer;
+            }
+        }
     },
 
     onTick: function(element) {
-        // 1. capture html 2 canvas
-        html2canvas(element).then(function(canvas) {
-            imageSRC = canvas.toDataURL();
+        console.log(element);
+        if (element) {
+            if (element.tagName === 'IFRAME') {
 
-            var packet = {
-                type: 'background',
-                image: imageSRC
-            };
-            chattingSocket.emit('draw', packet);
-        });
+                iframe2image(element, function(error, image) {
+                    if (error) {
+                        console.log("iframe2image error : " + error);
+                    } else {
+                        var packet = {
+                            type: 'background',
+                            image: image.src
+                        };
+                        chattingSocket.emit('draw', packet);
+                    }
+                });
+            } else if (element.tagName === 'VIDEO') {
+                var frame = captureVideoFrame(element);
+                var packet = {
+                    type: 'background',
+                    image: frame.dataUri
+                };
+                chattingSocket.emit('draw', packet);
+            }
+        } else {
+            console.log("error(onTick): no element!");
+        }
     },
 
     pause: function(element) {
-        this.capturer[element].pause();
-    },
-
-    resume: function(element) {
-        this.capturer[element].play();
-    }
-
-        remove: function(element) {
-        this.pause(element);
-        this.capturer[element] = null;
+        if (element) {
+            var timer = this.capturer[element];
+            if (timer) {
+                this.capturer[element] = null;
+            }
+        }
     }
 }
 
@@ -392,10 +442,7 @@ var LCANVAS = {
 
                             lc.backgroundShapes = [LC.createShape(
                                 'Image', {
-                                    x: 20,
-                                    y: 20,
-                                    image: image,
-                                    scale: 2
+                                    image: image
                                 })];
                             lc.repaintLayer('background', false);
                         } else {
@@ -406,7 +453,7 @@ var LCANVAS = {
                 lc_ = lc;
             }
         });
-        this.lcanvases[canvasDiv.attr("id")] = lc_;
+        this.lcanvases[TAB.currentTab] = lc_;
         lc_.on('drawingChange', function() {
             console.log("The drawing was changed.");
         });
@@ -460,13 +507,10 @@ var LCANVAS = {
                 };
                 chattingSocket.emit('draw', packet);
 
-                var currentLC = LCANVAS.lcanvases["lcanvas" + TAB.currentTab];
+                var currentLC = LCANVAS.lcanvases[TAB.currentTab];
                 currentLC.backgroundShapes = [LC.createShape(
                     'Image', {
-                        x: 20,
-                        y: 20,
-                        image: backgroundImage,
-                        scale: 2
+                        image: backgroundImage
                     })];
                 currentLC.repaintLayer('background', false);
                 if (prevCanvasTool)
@@ -522,6 +566,16 @@ var TAB = {
         }.bind(this));
     },
     selectTab: function(tabNumber) {
+        var captureElement;
+        if ($("#" + TAB.currentTab).hasClass("screenShare")) {
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+            captureElement = ("#" + TAB.currentTab).find("iframe").get(0);
+        } else {
+            captureElement = null;
+        }
+        CAPTURE.pause(captureElement);
+
         //tab
         $(".tab").css("display", "none");
         $("#tab" + tabNumber).css("display", "block");
@@ -536,6 +590,15 @@ var TAB = {
             "border-bottom": "none"
         });
         this.currentTab = "tab" + tabNumber;
+
+        if ($("#" + TAB.currentTab).hasClass("screenShare")) {
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+        } else {
+            captureElement = null;
+        }
+        CAPTURE.run(captureElement);
     },
     addTab: function(tabTemplate) {
         // add tab
@@ -546,24 +609,33 @@ var TAB = {
         });
         $("#tabs").append(newTab);
 
-        LCANVAS.init($("#lcanvas" + this.tabCount));
-
-        // get it
-        getScreenId(function(error, sourceId, screen_constraints) {
-            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-            navigator.getUserMedia(screen_constraints, function(stream) {
-                document.querySelector('video').src = URL.createObjectURL(stream); // change docu~'video' plz
-            }, function(error) {
-                console.error(error);
-            });
-        });
-        // got it
 
         // add tab button
         this.addTabBnt();
 
         // select new tab
         this.selectTab(this.tabCount);
+
+        var captureElement = null;
+        if (tabTemplate === "shareScreen") {
+            getScreenId(function(error, sourceId, screen_constraints) {
+                navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+                navigator.getUserMedia(screen_constraints, function(stream) {
+                    console.log($("#screen" + TAB.currentTab));
+                    $("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
+                }, function(error) {
+                    console.error(error);
+                });
+            });
+
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+        } else if (tabTemplate === "textbook") {
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+        }
+        CAPTURE.run(captureElement);
+
+
+        LCANVAS.init($("#lcanvas" + this.tabCount));
     },
     addTabBnt: function() {
         var tabBtn = $("#tabBtnTemplate").html();
@@ -590,20 +662,10 @@ var TEXTBOOK = {
             } else {
                 alert("url을 입력해주세요.");
             }
-        } else if (button === "changeLayer") {
-            this.changeLayer(layerControl);
         }
     },
     getTextBook: function(iframe, url) {
         iframe.attr("src", url);
-    },
-    changeLayer: function(layerControl) {
-        var canvas = layerControl.parents().find(".literally");
-        if (canvas.css("pointer-events") != "none") {
-            canvas.css("pointer-events", "none");
-        } else {
-            canvas.css("pointer-events", "auto");
-        }
     }
 }
 
@@ -614,11 +676,10 @@ $(window).on("load", function() {
     backgroundFileUploadElement = document.createElement("INPUT");
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
-
-    setInterval()
 });
 
 $(document).on("ready", function() {
     TAB.init();
     TEXTBOOK.init();
+    MENU.init();
 });
