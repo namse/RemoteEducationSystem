@@ -14,7 +14,9 @@
     <script src="/js/DetectRTC.js"></script>
     <script src="/js/getScreenId.js"></script>
     <script src="/js/screen.js"></script>
-    <script src="js/mustache.min.js"></script>
+    <script src="/js/mustache.min.js"></script>
+    <script src="/js/iframe2image.min.js"></script>
+    <script src="/js/capture-video-frame.js"></script>
 </head>
 
 <body>
@@ -34,10 +36,9 @@
             </div>
             <button id="muteBtn"></button>
             <button id="cameraPauseBtn"></button>
-			
         </div>
         <div id="setting">
-			<button id="changeLayer"></button>
+            <button id="changeLayer"></button>
             <button id="settingBtn"></button>
         </div>
     </nav>
@@ -61,24 +62,24 @@
                 <div class="chatArea">
                     <ul class="messages"></ul>
                 </div>
-				<div class="chatInput">
-					<input class="inputMessage" placeholder="Type here..." />
-					<button type="button" id="chatSend">SEND</button>
-				</div>
+                <div class="chatInput">
+                    <input class="inputMessage" placeholder="Type here..." />
+                    <button type="button" id="chatSend">SEND</button>
+                </div>
             </div>
         </section>
         <section id="canvasArea">
-			<ul id="tabNav">
-				<li id="plusTab">
-					<button class="tabBtn" value="+">+</button>
-					<div id="addTab">
-						<button value="whiteBoard">whiteboard</button>
-						<button value="textbook">교 재</button>
-						<button value="shareScreen">화면공유</button>
-					</div>
-				</li>
-			</ul>
-			<div id="tabs"></div>
+            <ul id="tabNav">
+                <li id="plusTab">
+                    <button class="tabBtn" value="+">+</button>
+                    <div id="addTab">
+                        <button value="whiteBoard">whiteboard</button>
+                        <button value="textbook">교 재</button>
+                        <button value="shareScreen">화면공유</button>
+                    </div>
+                </li>
+            </ul>
+            <div id="tabs"></div>
         </section>
     </main>
     <footer><span>Copyright Nexcos Co., Ltd. All rights reserved</span></footer>

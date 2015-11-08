@@ -32,6 +32,7 @@ var $inputMessage = $('.inputMessage'); // Input message input box
 
 
 
+
 // ajax로 방 정보 및 자신의 정보 얻어오기
 
 // Request
@@ -45,6 +46,7 @@ function sendInitPacket() {
     $.post("init", function(data) {
         console.log(data);
         isTeacher = data.isTeacher;
+        console.log(isTeacher);
         roomID = data.roomID;
         webRTCSignalServerURL = data.webRTCSignalServerURL;
         chattingServerURL = data.chattingServerURL;
@@ -153,7 +155,7 @@ $inputMessage.keydown(function(event) {
     console.log($inputMessage.val());
 });
 $("#chatSend").click(function() {
-	sendMessage();
+    sendMessage();
 });
 // Sends a chat message
 function sendMessage() {
@@ -276,26 +278,93 @@ function initButtons() {
 }
 
 var MENU = {
-	isMuted : false,
-	isCameraPause : false,
-	init : function() {
-		initButtons();
-		$("#changeLayer").on("click", this.layerControl.bind(this));
-	},
-	soundControl : function() {
+    isMuted: false,
+    isCameraPause: false,
+    init: function() {
+        $("#changeLayer").on("click", this.layerControl.bind(this));
+    },
+    soundControl: function() {
 
-	},
-	cameraControl : function() {
-		
-	},
-	layerControl : function() {
-		var canvas = $("#" + TAB.currentTab).find(".literally");
-		if (canvas.css("pointer-events") != "none") {
-			canvas.css("pointer-events", "none");
-		} else {
-			canvas.css("pointer-events", "auto");
-		}
-	}
+    },
+    cameraControl: function() {
+
+    },
+    layerControl: function() {
+        var canvas = $("#" + TAB.currentTab).find(".literally");
+        if (canvas.css("pointer-events") != "none") {
+            canvas.css("pointer-events", "none");
+        } else {
+            canvas.css("pointer-events", "auto");
+        }
+    }
+}
+
+function getClouser(element) {
+    function func() {
+        CAPTURE.onTick(element);
+    }
+    return func;
+}
+
+var CAPTURE = {
+
+    screenCapturePeriod: 5000, //ms
+    capturer: {}, // key : element(dom), value : timer
+
+    run: function(element) {
+        if (element) {
+            var timer = this.capturer[element];
+            if (!timer) {
+                var warp = function() {
+                    var element_ = element;
+                    return function() {
+                        CAPTURE.onTick(element_);
+                    }
+                };
+                var func = getClouser(element);
+                timer = setInterval(func, this.screenCapturePeriod);
+                this.capturer[element] = timer;
+            }
+        }
+    },
+
+    onTick: function(element) {
+        console.log(element);
+        if (element) {
+            if (element.tagName === 'IFRAME') {
+
+                iframe2image(element, function(error, image) {
+                    if (error) {
+                        console.log("iframe2image error : " + error);
+                    } else {
+                        var packet = {
+                            type: 'background',
+                            image: image.src
+                        };
+                        chattingSocket.emit('draw', packet);
+                    }
+                });
+            } else if (element.tagName === 'VIDEO') {
+                var frame = captureVideoFrame(element);
+                var packet = {
+                    type: 'background',
+                    image: frame.dataUri
+                };
+                chattingSocket.emit('draw', packet);
+            }
+        } else {
+            console.log("error(onTick): no element!");
+        }
+    },
+
+    pause: function(element) {
+        if (element) {
+            var timer = this.capturer[element];
+            if (timer) {
+                this.capturer[element] = null;
+            }
+        }
+    }
 }
 
 
@@ -383,10 +452,7 @@ var LCANVAS = {
 
                             lc.backgroundShapes = [LC.createShape(
                                 'Image', {
-                                    x: 20,
-                                    y: 20,
-                                    image: image,
-                                    scale: 2
+                                    image: image
                                 })];
                             lc.repaintLayer('background', false);
                         } else {
@@ -397,7 +463,7 @@ var LCANVAS = {
                 lc_ = lc;
             }
         });
-        this.lcanvases[canvasDiv.attr("id")] = lc_;
+        this.lcanvases[TAB.currentTab] = lc_;
         lc_.on('drawingChange', function() {
             console.log("The drawing was changed.");
         });
@@ -451,13 +517,10 @@ var LCANVAS = {
                 };
                 chattingSocket.emit('draw', packet);
 
-                var currentLC = LCANVAS.lcanvases["lcanvas" + TAB.currentTab];
+                var currentLC = LCANVAS.lcanvases[TAB.currentTab];
                 currentLC.backgroundShapes = [LC.createShape(
                     'Image', {
-                        x: 20,
-                        y: 20,
-                        image: backgroundImage,
-                        scale: 2
+                        image: backgroundImage
                     })];
                 currentLC.repaintLayer('background', false);
                 if (prevCanvasTool)
@@ -471,17 +534,17 @@ var LCANVAS = {
 
 var TAB = {
     tabCount: 0,
-	tabNum: 0,
+    tabNum: 0,
     tabType: ["whiteBoard", "textbook", "shareScreen"],
-	currentTab: null,
+    currentTab: null,
     init: function() {
-		 $("#tabNav").on("click", ".tabBtn", function(event) {
+        $("#tabNav").on("click", ".tabBtn", function(event) {
             var tabButton = $(event.target);
             var currentTab = tabButton.val();
             if (currentTab === "+") {
                 this.tabNum++;
-				this.tabCount++;
-				
+                this.tabCount++;
+
                 if ($("#addTab").hasClass("on")) {
                     $("#addTab").css("display", "none");
                 } else {
@@ -510,10 +573,20 @@ var TAB = {
                 $("#plusTab").css("display", "block");
             }
         }.bind(this));
-		
-		 $("#tabNav").on("click", ".delTab", this.deleteTab.bind(this));
+
+        $("#tabNav").on("click", ".delTab", this.deleteTab.bind(this));
     },
     selectTab: function(tabNumber) {
+        var captureElement;
+        if ($("#" + TAB.currentTab).hasClass("screenShare")) {
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+        } else {
+            captureElement = null;
+        }
+        CAPTURE.pause(captureElement);
+
         //tab
         $(".tab").css("display", "none");
         $("#tab" + tabNumber).css("display", "block");
@@ -523,14 +596,22 @@ var TAB = {
             "background-color": "#ddd",
             "border-bottom": "1px solid #b8b8b8"
         });
-		
-		var deleteCount = this.tabNum - this.tabCount + 1;
+
+        var deleteCount = this.tabNum - this.tabCount + 1;
         $("#tabBtn" + tabNumber).css({
             "background-color": "#fff",
             "border-bottom": "none"
         });
-        
-		this.currentTab = "tab" + tabNumber;
+        this.currentTab = "tab" + tabNumber;
+
+        if ($("#" + TAB.currentTab).hasClass("screenShare")) {
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+        } else {
+            captureElement = null;
+        }
+        CAPTURE.run(captureElement);
     },
     addTab: function(tabTemplate) {
         // add tab
@@ -542,27 +623,34 @@ var TAB = {
         });
         $("#tabs").append(newTab);
 
-        LCANVAS.init($("#lcanvas" + this.tabNum));
-		
-		if (tabTemplate === "shareScreen") {
-			getScreenId(function(error, sourceId, screen_constraints) {
-				navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-				navigator.getUserMedia(screen_constraints, function(stream) {
-					console.log($("#screen" + TAB.currentTab));
-					$("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
-				}, function(error) {
-					console.error(error);
-				});
-			});
-		}
-		
         // add tab button
         this.addTabBnt();
 
-        // select new tab
-        this.selectTab(this.tabNum);
+        this.selectTab(this.tabCount);
+
+        var captureElement = null;
+        if (tabTemplate === "shareScreen") {
+            getScreenId(function(error, sourceId, screen_constraints) {
+                navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+                navigator.getUserMedia(screen_constraints, function(stream) {
+                    console.log($("#screen" + TAB.currentTab));
+                    $("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
+                }, function(error) {
+                    console.error(error);
+                });
+            });
+
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+        } else if (tabTemplate === "textbook") {
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+        }
+        CAPTURE.run(captureElement);
+
+
+        LCANVAS.init($("#lcanvas" + this.tabCount));
+
     },
-    addTabBnt : function() {
+    addTabBnt: function() {
         var tabBtn = $("#tabBtnTemplate").html();
         Mustache.parse(tabBtn);
         var newTabBtn = Mustache.render(tabBtn, {
@@ -570,44 +658,45 @@ var TAB = {
         });
         $("#plusTab").before(newTabBtn);
     },
-	deleteTab : function(event) {
-		var tabBnt = $(event.target).parent();
-		var tabNum = tabBnt.find(".tabBtn").val();
-		tabBnt.remove();
-		$("#tab" + tabNum).remove();
-		
-		this.tabCount--;
-		
-		if ($("#tabNav").children().length == 1) {
-			return;
-		}
-		
-		if (this.currentTab === "tab" + tabNum) {
-			this.selectTab($(".tabBtn").eq(0).val());
-		}
-	}
+    deleteTab: function(event) {
+        var tabBnt = $(event.target).parent();
+        var tabNum = tabBnt.find(".tabBtn").val();
+        tabBnt.remove();
+        $("#tab" + tabNum).remove();
+
+        this.tabCount--;
+
+        if ($("#tabNav").children().length == 1) {
+            return;
+        }
+
+        if (this.currentTab === "tab" + tabNum) {
+            this.selectTab($(".tabBtn").eq(0).val());
+        }
+    }
 }
 
 var TEXTBOOK = {
     init: function() {
-		$("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
+        $("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
     },
     textbookHandler: function(event) {
-		var button = $(event.target).attr("class");
-		var layerControl = $(event.currentTarget);
-		if (button === "getTextbook") {
-			var url = layerControl.find("input").val();
-			if (url) {
-				var iframe = layerControl.parent().find("iframe");
-				this.getTextBook(iframe, url);
-			} else {
-				alert("url을 입력해주세요.");
-			}
-		}
+
+        var button = $(event.target).attr("class");
+        var layerControl = $(event.currentTarget);
+        if (button === "getTextbook") {
+            var url = layerControl.find("input").val();
+            if (url) {
+                var iframe = layerControl.parent().find("iframe");
+                this.getTextBook(iframe, url);
+            } else {
+                alert("url을 입력해주세요.");
+            }
+        }
     },
     getTextBook: function(iframe, url) {
-		iframe.attr("src", url);
-	}
+        iframe.attr("src", url);
+    }
 }
 
 // Service code
@@ -622,5 +711,5 @@ $(window).on("load", function() {
 $(document).on("ready", function() {
     TAB.init();
     TEXTBOOK.init();
-	MENU.init();
+    MENU.init();
 });
