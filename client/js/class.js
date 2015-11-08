@@ -617,7 +617,7 @@ var TAB = {
         // add tab button
         this.addTabBnt();
 
-        this.selectTab(this.tabCount);
+        this.selectTab(this.tabNum);
 
         var captureElement = null;
         if (tabTemplate === "shareScreen") {
@@ -638,7 +638,7 @@ var TAB = {
         CAPTURE.run(captureElement);
 
 
-        LCANVAS.init($("#lcanvas" + this.tabCount));
+        LCANVAS.init($("#lcanvas" + this.tabNum));
 
     },
     addTabBnt: function() {
