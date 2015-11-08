@@ -137,6 +137,22 @@ function loadChatting() {
     chattingSocket.on('chat', function(msg) {
         addChatMessage(msg);
     });
+
+    if (isTeacher == false) {
+        chattingSocket.on('tab', function(packet) {
+
+            // packet
+            // - type
+
+            if (packet.type === 'add') {
+                TAB.addTab(packet.tabTemplate);
+            } else if (packet.type === 'select') {
+                TAB.selectTab(packet.tabNumber);
+            } else if (packet.type === 'delete') {
+                TAB.selectTab(packet.tabNumber);
+            }
+        });
+    }
 }
 
 
@@ -255,25 +271,23 @@ function initButtons() {
     $("#muteBtn").click(function() {
         isMuted = !isMuted;
         if (isMuted) {
-			webRTC.mute();
-			$("#muteBtn").css("background-image", "url('../image/sound_off.png')");
-		}   
-        else {
-			webRTC.unmute();
-			$("#muteBtn").css("background-image", "url('../image/sound_on.png')");
-		}
+            webRTC.mute();
+            $("#muteBtn").css("background-image", "url('../image/sound_off.png')");
+        } else {
+            webRTC.unmute();
+            $("#muteBtn").css("background-image", "url('../image/sound_on.png')");
+        }
     });
 
     $("#cameraPauseBtn").click(function() {
         isCameraPause = !isCameraPause;
         if (isCameraPause) {
-			webRTC.pauseVideo();
-			$("#cameraPauseBtn").css("background-image", "url('../image/video_off.png')");
-		}
-        else {
-			webRTC.resumeVideo();
-			$("#cameraPauseBtn").css("background-image", "url('../image/video_on.png')");
-		}
+            webRTC.pauseVideo();
+            $("#cameraPauseBtn").css("background-image", "url('../image/video_off.png')");
+        } else {
+            webRTC.resumeVideo();
+            $("#cameraPauseBtn").css("background-image", "url('../image/video_on.png')");
+        }
     });
 }
 
@@ -612,6 +626,15 @@ var TAB = {
             captureElement = null;
         }
         CAPTURE.run(captureElement);
+
+        if (isTeacher) {
+            var packet = {
+                type: 'add',
+                tabNumber: tabNumber
+            };
+            chattingSocket.emit('tab', packet);
+        }
+
     },
     addTab: function(tabTemplate) {
         // add tab
@@ -619,7 +642,7 @@ var TAB = {
         Mustache.parse(template);
         var newTab = Mustache.render(template, {
             tabNum: this.tabNum,
-			textbook: isTeacher ? "<iframe></iframe>" : "<canvas>"
+            textbook: isTeacher ? "<iframe></iframe>" : "<canvas>"
         });
         $("#tabs").append(newTab);
 
@@ -649,6 +672,13 @@ var TAB = {
 
         LCANVAS.init($("#lcanvas" + this.tabNum));
 
+        if (isTeacher) {
+            var packet = {
+                type: 'add',
+                tabTemplate: tabTemplate
+            };
+            chattingSocket.emit('tab', packet);
+        }
     },
     addTabBnt: function() {
         var tabBtn = $("#tabBtnTemplate").html();
@@ -672,6 +702,14 @@ var TAB = {
 
         if (this.currentTab === "tab" + tabNum) {
             this.selectTab($(".tabBtn").eq(0).val());
+        }
+
+        if (isTeacher) {
+            var packet = {
+                type: 'add',
+                //            tabNum : tabNum
+            };
+            chattingSocket.emit('tab', packet);
         }
     }
 }
