@@ -23,7 +23,7 @@
             <h1>Video Call Education Service</h1></div>
         <div id="clock">
             <!--<img src="" alt="O">-->
-            <span>00:01</span>
+            <span>00:00</span>
         </div>
     </header>
     <nav>
@@ -83,16 +83,19 @@
     </main>
     <footer><span>Copyright Nexcos Co., Ltd. All rights reserved</span></footer>
 	<script id="tabBtnTemplate" type="x-tmpl-mustache">
-		<li><button class="tabBtn" value={{tabCount}}>tab{{tabCount}}</button>
+		<li>
+			<button id="tabBtn{{tabNum}}" class="tabBtn" value={{tabNum}}>tab{{tabNum}}</button>
+			<button class="delTab">x</button>
+		</li>
 	</script>
 	<script id="whiteBoardTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabCount}}" class="tab whiteBoard">
-			<div id="lcanvas{{tabCount}}" class="literally"></div>
+		<div id="tab{{tabNum}}" class="tab whiteBoard">
+			<div id="lcanvas{{tabNum}}" class="literally"></div>
 		</div>
 	</script>
 	<script id="textbookTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabCount}}" class="tab textbook">
-			<div id="lcanvas{{tabCount}}" class="literally front"></div>
+		<div id="tab{{tabNum}}" class="tab textbook">
+			<div id="lcanvas{{tabNum}}" class="literally front"></div>
 			<div class="iframeContainer">
 				<iframe></iframe>
 			</div>
@@ -103,9 +106,9 @@
 		</div>
 	</script>
 	<script id="shareScreenTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabCount}}" class="tab shareScreen">
-			<video id="screen{{tabCount}}"></video>
-			<div id="lcanvas{{tabCount}}" class="literally front"></div>
+		<div id="tab{{tabNum}}" class="tab shareScreen">
+			<video id="screen{{tabNum}}"></video>
+			<div id="lcanvas{{tabNum}}" class="literally front"></div>
 		</div>
 	</script>
     <script src="/js/class.js"></script>

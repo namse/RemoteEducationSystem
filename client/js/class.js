@@ -462,18 +462,17 @@ var LCANVAS = {
 
 var TAB = {
     tabCount: 0,
+	tabNum: 0,
     tabType: ["whiteBoard", "textbook", "shareScreen"],
+	currentTab: null,
     init: function() {
-        this.tabControl();
-    },
-    currentTab: null,
-    tabControl: function() {
-        // tabNav eventListener
-        $("#tabNav").on("click", ".tabBtn", function(event) {
+		 $("#tabNav").on("click", ".tabBtn", function(event) {
             var tabButton = $(event.target);
             var currentTab = tabButton.val();
             if (currentTab === "+") {
-                this.tabCount++;
+                this.tabNum++;
+				this.tabCount++;
+				
                 if ($("#addTab").hasClass("on")) {
                     $("#addTab").css("display", "none");
                 } else {
@@ -502,6 +501,8 @@ var TAB = {
                 $("#plusTab").css("display", "block");
             }
         }.bind(this));
+		
+		 $("#tabNav").on("click", ".delTab", this.deleteTab.bind(this));
     },
     selectTab: function(tabNumber) {
         //tab
@@ -513,22 +514,25 @@ var TAB = {
             "background-color": "#ddd",
             "border-bottom": "1px solid #b8b8b8"
         });
-        $(".tabBtn").eq(parseInt(tabNumber) - 1).css({
+		
+		var deleteCount = this.tabNum - this.tabCount + 1;
+        $("#tabBtn" + tabNumber).css({
             "background-color": "#fff",
             "border-bottom": "none"
         });
-        this.currentTab = "tab" + tabNumber;
+        
+		this.currentTab = "tab" + tabNumber;
     },
     addTab: function(tabTemplate) {
         // add tab
         var template = $("#" + tabTemplate + "Template").html();
         Mustache.parse(template);
         var newTab = Mustache.render(template, {
-            tabCount: this.tabCount
+            tabNum: this.tabNum
         });
         $("#tabs").append(newTab);
 
-        LCANVAS.init($("#lcanvas" + this.tabCount));
+        LCANVAS.init($("#lcanvas" + this.tabNum));
 		
 		if (tabTemplate === "shareScreen") {
 			getScreenId(function(error, sourceId, screen_constraints) {
@@ -541,21 +545,37 @@ var TAB = {
 				});
 			});
 		}
-
+		
         // add tab button
         this.addTabBnt();
 
         // select new tab
-        this.selectTab(this.tabCount);
+        this.selectTab(this.tabNum);
     },
-    addTabBnt: function() {
+    addTabBnt : function() {
         var tabBtn = $("#tabBtnTemplate").html();
         Mustache.parse(tabBtn);
         var newTabBtn = Mustache.render(tabBtn, {
-            tabCount: this.tabCount
+            tabNum: this.tabNum
         });
         $("#plusTab").before(newTabBtn);
-    }
+    },
+	deleteTab : function(event) {
+		var tabBnt = $(event.target).parent();
+		var tabNum = tabBnt.find(".tabBtn").val();
+		tabBnt.remove();
+		$("#tab" + tabNum).remove();
+		
+		this.tabCount--;
+		
+		if ($("#tabNav").children().length == 1) {
+			return;
+		}
+		
+		if (this.currentTab === "tab" + tabNum) {
+			this.selectTab($(".tabBtn").eq(0).val());
+		}
+	}
 }
 
 var TEXTBOOK = {
@@ -568,7 +588,7 @@ var TEXTBOOK = {
 		if (button === "getTextbook") {
 			var url = layerControl.find("input").val();
 			if (url) {
-				var iframe = layerControl.parents().find("iframe");
+				var iframe = layerControl.parent().find("iframe");
 				this.getTextBook(iframe, url);
 			} else {
 				alert("url을 입력해주세요.");
