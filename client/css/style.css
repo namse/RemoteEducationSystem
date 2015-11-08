@@ -11,53 +11,22 @@ html {
     font: inherit;
 }
 
-body,
-div,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-h1,
-h2,
-h3,
-h4,
-h5,
-form,
-fieldset,
-p,
-button {
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,form,fieldset,p,button {
     margin: 0;
     padding: 0;
     border: 0;
     color: #333;
 }
 
-header,
-aside,
-article,
-nav,
-main,
-section,
-details,
-figcaption,
-figure,
-footer,
-hgroup,
-menu {
+header,aside,article,nav,main,section,details,figcaption,figure,footer,hgroup,menu {
     display: block;
 }
 
-img,
-fieldset,
-iframe {
+img,fieldset,iframe {
     border: 0 none
 }
 
-input,
-select,
-button {
+input,select,button {
     vertical-align: middle;
 }
 
@@ -65,8 +34,7 @@ img {
     max-width: 100%;
 }
 
-label,
-button {
+label,button {
     cursor: pointer
 }
 
@@ -90,8 +58,7 @@ table {
     border-spacing: 0
 }
 
-ol,
-ul {
+ol,ul {
     list-style: none
 }
 
@@ -160,8 +127,22 @@ nav button {
     height: 100%;
     text-align: center;
     color: white;
+	background-repeat: no-repeat;
+	background-size: 25px 25px;
+	background-position: center;
 }
-
+nav #muteBtn {
+	background-image: url(../image/sound_on.png);
+}
+nav #cameraPauseBtn {
+	background-image: url(../image/video_on.png);
+}
+nav #changeLayer {
+	background-image: url(../image/layer.png);
+}
+nav #settingBtn {
+	background-image: url(../image/setting.png);
+}
 nav button:hover {
     background-color: #2E2E2E;
 }
@@ -175,8 +156,8 @@ nav > div {
 }
 
 nav #client {
-    width: 260px;
-    border-right: 1px solid #222;
+    width: 300px;
+    border-right: 1px solid #111;
 }
 
 nav #client #myInfo {

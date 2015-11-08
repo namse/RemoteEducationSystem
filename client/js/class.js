@@ -152,7 +152,9 @@ $inputMessage.keydown(function(event) {
     }
     console.log($inputMessage.val());
 });
-
+$("#chatSend").click(function() {
+	sendMessage();
+});
 // Sends a chat message
 function sendMessage() {
     var message = $inputMessage.val();
