@@ -55,7 +55,11 @@ function sendInitPacket() {
         loadWebRTC();
         loadChatting();
     }).done(function() {
-		
+		if (isTeacher) {
+			TAB.init();
+			TEXTBOOK.init();
+			MENU.init();
+		}
 	}).fail(function() {
         alert("error");
     });
@@ -119,7 +123,7 @@ function loadWebRTC() {
             // you can name it anything
             webRTC.joinRoom(roomID);
 
-            initButtons();
+            
         });
         //});
     });
@@ -715,7 +719,5 @@ $(window).on("load", function() {
 });
 
 $(document).on("ready", function() {
-    TAB.init();
-    TEXTBOOK.init();
-    MENU.init();
+    initButtons();
 });
