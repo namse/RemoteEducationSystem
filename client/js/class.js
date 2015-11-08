@@ -32,6 +32,7 @@ var $inputMessage = $('.inputMessage'); // Input message input box
 
 
 
+
 // ajax로 방 정보 및 자신의 정보 얻어오기
 
 // Request
@@ -264,6 +265,46 @@ function initButtons() {
         else
             webRTC.resumeVideo();
     });
+}
+
+
+var CAPTURE = {
+
+    screenCapturePeriod: 200; //ms
+    capturer: {}, // key : element, value : timer
+
+    init: function(element) {
+        var timer = $.timer(function() {
+            onTick(element);
+        }, this.screenCapturePeriod, true);
+        capturer[element] = timer;
+    },
+
+    onTick: function(element) {
+        // 1. capture html 2 canvas
+        html2canvas(element).then(function(canvas) {
+            imageSRC = canvas.toDataURL();
+
+            var packet = {
+                type: 'background',
+                image: imageSRC
+            };
+            chattingSocket.emit('draw', packet);
+        });
+    },
+
+    pause: function(element) {
+        this.capturer[element].pause();
+    },
+
+    resume: function(element) {
+        this.capturer[element].play();
+    }
+
+        remove: function(element) {
+        this.pause(element);
+        this.capturer[element] = null;
+    }
 }
 
 
@@ -574,6 +615,7 @@ $(window).on("load", function() {
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
 
+    setInterval()
 });
 
 $(document).on("ready", function() {
