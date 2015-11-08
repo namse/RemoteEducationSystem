@@ -506,7 +506,18 @@ var TAB = {
         $("#tabs").append(newTab);
 
         LCANVAS.init($("#lcanvas" + this.tabCount));
-		
+
+        // get it
+        getScreenId(function(error, sourceId, screen_constraints) {
+            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+            navigator.getUserMedia(screen_constraints, function(stream) {
+                document.querySelector('video').src = URL.createObjectURL(stream); // change docu~'video' plz
+            }, function(error) {
+                console.error(error);
+            });
+        });
+        // got it
+
         // add tab button
         this.addTabBnt();
 
