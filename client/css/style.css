@@ -175,8 +175,8 @@ nav > div {
 }
 
 nav #client {
-    width: 300px;
-    border-right: 1px solid #111;
+    width: 260px;
+    border-right: 1px solid #222;
 }
 
 nav #client #myInfo {
