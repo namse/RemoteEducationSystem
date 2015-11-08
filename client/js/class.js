@@ -154,7 +154,9 @@ $inputMessage.keydown(function(event) {
     }
     console.log($inputMessage.val());
 });
-
+$("#chatSend").click(function() {
+    sendMessage();
+});
 // Sends a chat message
 function sendMessage() {
     var message = $inputMessage.val();
@@ -524,18 +526,17 @@ var LCANVAS = {
 
 var TAB = {
     tabCount: 0,
+    tabNum: 0,
     tabType: ["whiteBoard", "textbook", "shareScreen"],
-    init: function() {
-        this.tabControl();
-    },
     currentTab: null,
-    tabControl: function() {
-        // tabNav eventListener
+    init: function() {
         $("#tabNav").on("click", ".tabBtn", function(event) {
             var tabButton = $(event.target);
             var currentTab = tabButton.val();
             if (currentTab === "+") {
+                this.tabNum++;
                 this.tabCount++;
+
                 if ($("#addTab").hasClass("on")) {
                     $("#addTab").css("display", "none");
                 } else {
@@ -564,13 +565,15 @@ var TAB = {
                 $("#plusTab").css("display", "block");
             }
         }.bind(this));
+
+        $("#tabNav").on("click", ".delTab", this.deleteTab.bind(this));
     },
     selectTab: function(tabNumber) {
         var captureElement;
         if ($("#" + TAB.currentTab).hasClass("screenShare")) {
             captureElement = $("#" + TAB.currentTab).find("video").get(0);
         } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
-            captureElement = ("#" + TAB.currentTab).find("iframe").get(0);
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
         } else {
             captureElement = null;
         }
@@ -585,7 +588,9 @@ var TAB = {
             "background-color": "#ddd",
             "border-bottom": "1px solid #b8b8b8"
         });
-        $(".tabBtn").eq(parseInt(tabNumber) - 1).css({
+
+        var deleteCount = this.tabNum - this.tabCount + 1;
+        $("#tabBtn" + tabNumber).css({
             "background-color": "#fff",
             "border-bottom": "none"
         });
@@ -605,15 +610,13 @@ var TAB = {
         var template = $("#" + tabTemplate + "Template").html();
         Mustache.parse(template);
         var newTab = Mustache.render(template, {
-            tabCount: this.tabCount
+            tabNum: this.tabNum
         });
         $("#tabs").append(newTab);
-
 
         // add tab button
         this.addTabBnt();
 
-        // select new tab
         this.selectTab(this.tabCount);
 
         var captureElement = null;
@@ -636,14 +639,31 @@ var TAB = {
 
 
         LCANVAS.init($("#lcanvas" + this.tabCount));
+
     },
     addTabBnt: function() {
         var tabBtn = $("#tabBtnTemplate").html();
         Mustache.parse(tabBtn);
         var newTabBtn = Mustache.render(tabBtn, {
-            tabCount: this.tabCount
+            tabNum: this.tabNum
         });
         $("#plusTab").before(newTabBtn);
+    },
+    deleteTab: function(event) {
+        var tabBnt = $(event.target).parent();
+        var tabNum = tabBnt.find(".tabBtn").val();
+        tabBnt.remove();
+        $("#tab" + tabNum).remove();
+
+        this.tabCount--;
+
+        if ($("#tabNav").children().length == 1) {
+            return;
+        }
+
+        if (this.currentTab === "tab" + tabNum) {
+            this.selectTab($(".tabBtn").eq(0).val());
+        }
     }
 }
 
@@ -652,12 +672,13 @@ var TEXTBOOK = {
         $("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
     },
     textbookHandler: function(event) {
+
         var button = $(event.target).attr("class");
         var layerControl = $(event.currentTarget);
         if (button === "getTextbook") {
             var url = layerControl.find("input").val();
             if (url) {
-                var iframe = layerControl.parents().find("iframe");
+                var iframe = layerControl.parent().find("iframe");
                 this.getTextBook(iframe, url);
             } else {
                 alert("url을 입력해주세요.");

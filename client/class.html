@@ -25,7 +25,7 @@
             <h1>Video Call Education Service</h1></div>
         <div id="clock">
             <!--<img src="" alt="O">-->
-            <span>00:01</span>
+            <span>00:00</span>
         </div>
     </header>
     <nav>
@@ -34,12 +34,12 @@
                 <!--<img src="" alt="O">-->
                 <span>이나영</span>
             </div>
-            <button id="muteBtn">M</button>
-            <button id="cameraPauseBtn">V</button>
+            <button id="muteBtn"></button>
+            <button id="cameraPauseBtn"></button>
         </div>
         <div id="setting">
-            <button id="changeLayer">화면전환</button>
-            <button id="saveBtn">S</button>
+            <button id="changeLayer"></button>
+            <button id="settingBtn"></button>
         </div>
     </nav>
     <main>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="chatInput">
                     <input class="inputMessage" placeholder="Type here..." />
-                    <button type="button">SEND</button>
+                    <button type="button" id="chatSend">SEND</button>
                 </div>
             </div>
         </section>
@@ -85,17 +85,18 @@
     <footer><span>Copyright Nexcos Co., Ltd. All rights reserved</span></footer>
     <script id="tabBtnTemplate" type="x-tmpl-mustache">
         <li>
-            <button class="tabBtn" value={{tabCount}}>tab{{tabCount}}</button>
+            <button id="tabBtn{{tabNum}}" class="tabBtn" value={{tabNum}}>tab{{tabNum}}</button>
+            <button class="delTab">x</button>
         </li>
     </script>
     <script id="whiteBoardTemplate" type="x-tmpl-mustache">
-        <div id="tab{{tabCount}}" class="tab whiteBoard">
-            <div id="lcanvas{{tabCount}}" class="literally"></div>
+        <div id="tab{{tabNum}}" class="tab whiteBoard">
+            <div id="lcanvas{{tabNum}}" class="literally"></div>
         </div>
     </script>
     <script id="textbookTemplate" type="x-tmpl-mustache">
-        <div id="tab{{tabCount}}" class="tab textbook">
-            <div id="lcanvas{{tabCount}}" class="literally front"></div>
+        <div id="tab{{tabNum}}" class="tab textbook">
+            <div id="lcanvas{{tabNum}}" class="literally front"></div>
             <div class="iframeContainer">
                 <iframe></iframe>
             </div>
@@ -106,9 +107,9 @@
         </div>
     </script>
     <script id="shareScreenTemplate" type="x-tmpl-mustache">
-        <div id="tab{{tabCount}}" class="tab shareScreen">
-            <video id="screen{{tabCount}}" autoplay></video>
-            <div id="lcanvas{{tabCount}}" class="literally front"></div>
+        <div id="tab{{tabNum}}" class="tab shareScreen">
+            <video id="screen{{tabNum}}"></video>
+            <div id="lcanvas{{tabNum}}" class="literally front"></div>
         </div>
     </script>
     <script src="/js/class.js"></script>
