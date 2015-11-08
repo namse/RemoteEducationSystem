@@ -668,7 +668,9 @@ var TAB = {
 
         if ($("#tabNav").children().length == 1) {
             return;
-        }
+        } else if ($("#tabNav").children().length == 10) {
+			$("#plusTab").css("display", "block");
+		}
 
         if (this.currentTab === "tab" + tabNum) {
             this.selectTab($(".tabBtn").eq(0).val());
