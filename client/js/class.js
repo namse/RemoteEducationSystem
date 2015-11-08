@@ -247,7 +247,6 @@ function cleanInput(input) {
     return $('<div/>').text(input).text();
 }
 
-
 function initButtons() {
     $("#muteBtn").click(function() {
         isMuted = !isMuted;
@@ -264,6 +263,28 @@ function initButtons() {
         else
             webRTC.resumeVideo();
     });
+}
+
+var MENU = {
+	isMuted : false,
+	isCameraPause : false,
+	init : function() {
+		$("#changeLayer").on("click", this.layerControl.bind(this));
+	},
+	soundControl : function() {
+
+	},
+	cameraControl : function() {
+		
+	},
+	layerControl : function() {
+		var canvas = $("#" + TAB.currentTab).find(".literally");
+		if (canvas.css("pointer-events") != "none") {
+			canvas.css("pointer-events", "none");
+		} else {
+			canvas.css("pointer-events", "auto");
+		}
+	}
 }
 
 
@@ -506,17 +527,18 @@ var TAB = {
         $("#tabs").append(newTab);
 
         LCANVAS.init($("#lcanvas" + this.tabCount));
-
-        // get it
-        getScreenId(function(error, sourceId, screen_constraints) {
-            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-            navigator.getUserMedia(screen_constraints, function(stream) {
-                document.querySelector('video').src = URL.createObjectURL(stream); // change docu~'video' plz
-            }, function(error) {
-                console.error(error);
-            });
-        });
-        // got it
+		
+		if (tabTemplate === "shareScreen") {
+			getScreenId(function(error, sourceId, screen_constraints) {
+				navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+				navigator.getUserMedia(screen_constraints, function(stream) {
+					console.log($("#screen" + TAB.currentTab));
+					$("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
+				}, function(error) {
+					console.error(error);
+				});
+			});
+		}
 
         // add tab button
         this.addTabBnt();
@@ -536,34 +558,24 @@ var TAB = {
 
 var TEXTBOOK = {
     init: function() {
-        $("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
+		$("#tabs").on("click", ".layerControl", this.textbookHandler.bind(this));
     },
     textbookHandler: function(event) {
-        var button = $(event.target).attr("class");
-        var layerControl = $(event.currentTarget);
-        if (button === "getTextbook") {
-            var url = layerControl.find("input").val();
-            if (url) {
-                var iframe = layerControl.parents().find("iframe");
-                this.getTextBook(iframe, url);
-            } else {
-                alert("url을 입력해주세요.");
-            }
-        } else if (button === "changeLayer") {
-            this.changeLayer(layerControl);
-        }
+		var button = $(event.target).attr("class");
+		var layerControl = $(event.currentTarget);
+		if (button === "getTextbook") {
+			var url = layerControl.find("input").val();
+			if (url) {
+				var iframe = layerControl.parents().find("iframe");
+				this.getTextBook(iframe, url);
+			} else {
+				alert("url을 입력해주세요.");
+			}
+		}
     },
     getTextBook: function(iframe, url) {
-        iframe.attr("src", url);
-    },
-    changeLayer: function(layerControl) {
-        var canvas = layerControl.parents().find(".literally");
-        if (canvas.css("pointer-events") != "none") {
-            canvas.css("pointer-events", "none");
-        } else {
-            canvas.css("pointer-events", "auto");
-        }
-    }
+		iframe.attr("src", url);
+	}
 }
 
 // Service code
@@ -573,10 +585,10 @@ $(window).on("load", function() {
     backgroundFileUploadElement = document.createElement("INPUT");
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
-
 });
 
 $(document).on("ready", function() {
     TAB.init();
     TEXTBOOK.init();
+	MENU.init();
 });

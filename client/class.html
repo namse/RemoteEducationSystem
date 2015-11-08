@@ -34,8 +34,10 @@
             </div>
             <button id="muteBtn">M</button>
             <button id="cameraPauseBtn">V</button>
+			
         </div>
         <div id="setting">
+			<button id="changeLayer">화면전환</button>
             <button id="saveBtn">S</button>
         </div>
     </nav>
@@ -98,7 +100,6 @@
 			<div class="layerControl">
 				<input type="text" placeholder="Textbook URL을 입력하세요.">
 				<button class="getTextbook">가져오기</button>
-				<button class="changeLayer">화면전환</button>
 			</div>
 		</div>
 	</script>
@@ -106,9 +107,6 @@
 		<div id="tab{{tabCount}}" class="tab shareScreen">
 			<video id="screen{{tabCount}}"></video>
 			<div id="lcanvas{{tabCount}}" class="literally front"></div>
-			<div class="layerControl">
-				<button class="changeLayer">화면전환</button>
-			</div>
 		</div>
 	</script>
     <script src="/js/class.js"></script>
