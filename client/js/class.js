@@ -55,8 +55,8 @@ function sendInitPacket() {
         loadWebRTC();
         loadChatting();
     }).done(function() {
-		
-	}).fail(function() {
+
+    }).fail(function() {
         alert("error");
     });
 }
@@ -151,7 +151,7 @@ function loadChatting() {
             } else if (packet.type === 'select') {
                 TAB.selectTab(packet.tabNumber);
             } else if (packet.type === 'delete') {
-                TAB.selectTab(packet.tabNumber);
+                TAB.deleteTab(packet.tabNumber);
             }
         });
     }
@@ -591,10 +591,10 @@ var TAB = {
         }.bind(this));
 
         $("#tabNav").on("click", ".delTab", function(event) {
-			var tabBnt = $(event.target).parent();
-        	var tabNum = tabBnt.find(".tabBtn").val();
-			this.deleteTab(tabNum);
-		}.bind(this));
+            var tabBnt = $(event.target).parent();
+            var tabNum = tabBnt.find(".tabBtn").val();
+            this.deleteTab(tabNum);
+        }.bind(this));
     },
     selectTab: function(tabNumber) {
         var captureElement;
@@ -696,15 +696,15 @@ var TAB = {
     },
     deleteTab: function(tabNumber) {
         $("#tabBtn" + tabNumber).remove();
-		$("#tab" + tabNumber).remove();
+        $("#tab" + tabNumber).remove();
 
         this.tabCount--;
 
         if ($("#tabNav").children().length == 1) {
             return;
         } else if ($("#tabNav").children().length == 10) {
-			$("#plusTab").css("display", "block");
-		}
+            $("#plusTab").css("display", "block");
+        }
 
         if (this.currentTab === "tab" + tabNumber) {
             this.selectTab($(".tabBtn").eq(0).val());
@@ -713,7 +713,7 @@ var TAB = {
         if (isTeacher) {
             var packet = {
                 type: 'add',
-                //            tabNum : tabNum
+                tabNumber: tabNumber
             };
             chattingSocket.emit('tab', packet);
         }
