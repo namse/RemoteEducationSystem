@@ -132,16 +132,16 @@ nav button {
 	background-position: center;
 }
 nav #muteBtn {
-	background-image: url(../image/sound_on.png);
+	background-image: url("../image/sound_on.png");
 }
 nav #cameraPauseBtn {
-	background-image: url(../image/video_on.png);
+	background-image: url("../image/video_on.png");
 }
 nav #changeLayer {
-	background-image: url(../image/layer.png);
+	background-image: url("../image/layer.png");
 }
 nav #settingBtn {
-	background-image: url(../image/setting.png);
+	background-image: url("../image/setting.png");
 }
 nav button:hover {
     background-color: #2E2E2E;

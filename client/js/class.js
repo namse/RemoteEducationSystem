@@ -252,18 +252,26 @@ function cleanInput(input) {
 function initButtons() {
     $("#muteBtn").click(function() {
         isMuted = !isMuted;
-        if (isMuted)
-            webRTC.mute();
-        else
-            webRTC.unmute();
+        if (isMuted) {
+			webRTC.mute();
+			$("#muteBtn").css("background-image", "url('../image/sound_off.png')");
+		}   
+        else {
+			webRTC.unmute();
+			$("#muteBtn").css("background-image", "url('../image/sound_on.png')");
+		}
     });
 
     $("#cameraPauseBtn").click(function() {
         isCameraPause = !isCameraPause;
-        if (isCameraPause)
-            webRTC.pauseVideo();
-        else
-            webRTC.resumeVideo();
+        if (isCameraPause) {
+			webRTC.pauseVideo();
+			$("#cameraPauseBtn").css("background-image", "url('../image/video_off.png')");
+		}
+        else {
+			webRTC.resumeVideo();
+			$("#cameraPauseBtn").css("background-image", "url('../image/video_on.png')");
+		}
     });
 }
 
@@ -271,6 +279,7 @@ var MENU = {
 	isMuted : false,
 	isCameraPause : false,
 	init : function() {
+		initButtons();
 		$("#changeLayer").on("click", this.layerControl.bind(this));
 	},
 	soundControl : function() {
@@ -528,7 +537,8 @@ var TAB = {
         var template = $("#" + tabTemplate + "Template").html();
         Mustache.parse(template);
         var newTab = Mustache.render(template, {
-            tabNum: this.tabNum
+            tabNum: this.tabNum,
+			textbook: isTeacher ? "<iframe></iframe>" : "<canvas>"
         });
         $("#tabs").append(newTab);
 
