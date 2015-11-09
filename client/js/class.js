@@ -158,6 +158,49 @@ function loadChatting() {
                 TAB.deleteTab(packet.tabNumber);
             }
         });
+
+        chattingSocket.on('draw', function(data) {
+
+            // packet : 'draw'
+            // - type
+            // - tab
+            // - content that defended on type.
+            var lc = LCANVAS.lcanvases[data.tab];
+            if (lc) {
+                if (data.type == 'shapeSave') {
+                    lc.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
+                } else if (data.type == 'pan') {
+                    lc.setPan(data.x, data.y);
+                } else if (data.type == 'zoom') {
+                    lc.setZoom(data.amount);
+                } else if (data.type == 'clear') {
+                    lc.clear();
+                } else if (data.type == 'undo') {
+                    lc.undo();
+                } else if (data.type == 'redo') {
+                    lc.redo();
+                } else if (data.type == 'background') {
+                    if ($("#" + data.tab).hasClass("shareScreen")) {
+                        $("#" + TAB.currentTab).get(0).style.backgroundImage = "url(" + data.image + ")";
+                        $("#" + TAB.currentTab).get(0).style.backgroundPosition = "center center";
+                        $("#" + TAB.currentTab).get(0).style.backgroundRepeat = "no-repeat";
+                        $("#" + TAB.currentTab).get(0).style.backgroundSize = "contain";
+                    } else {
+                        var image = new Image()
+                        image.src = data.image;
+                        lc.backgroundShapes = [LC.createShape(
+                            'Image', {
+                                image: image
+                            })];
+                        lc.repaintLayer('background', false);
+                    }
+
+                } else {
+                    console.log(data);
+                }
+            }
+        });
+
     }
 }
 
@@ -359,6 +402,7 @@ var CAPTURE = {
                     } else {
                         var packet = {
                             type: 'background',
+                            tab: TAB.currentTab,
                             image: image.src
                         };
                         chattingSocket.emit('draw', packet);
@@ -368,6 +412,7 @@ var CAPTURE = {
                 var frame = captureVideoFrame(element);
                 var packet = {
                     type: 'background',
+                    tab: TAB.currentTab,
                     image: frame.dataUri
                 };
                 chattingSocket.emit('draw', packet);
@@ -381,6 +426,7 @@ var CAPTURE = {
         if (element) {
             var timer = this.capturer[element];
             if (timer) {
+                clearInterval(timer);
                 this.capturer[element] = null;
             }
         }
@@ -393,6 +439,7 @@ var LCANVAS = {
     init: function(canvasDiv) {
         var tools = this.getCustomCanvasTools(LC);
         var lc_;
+        var currentTab = TAB.currentTab;
         canvasDiv.literallycanvas({
             imageURLPrefix: '/static/img',
             tools: tools,
@@ -404,6 +451,7 @@ var LCANVAS = {
                     lc.on('shapeSave', function(data) {
                         var packet = {
                             type: 'shapeSave',
+                            tab: currentTab,
                             shapeJSON: LC.shapeToJSON(data.shape),
                             previousShapeId: data.previousShapeId
                         };
@@ -411,25 +459,29 @@ var LCANVAS = {
                     });
                     lc.on('clear', function() {
                         var packet = {
-                            type: 'clear'
+                            type: 'clear',
+                            tab: currentTab
                         };
                         chattingSocket.emit('draw', packet);
                     });
                     lc.on('undo', function() {
                         var packet = {
-                            type: 'undo'
+                            type: 'undo',
+                            tab: currentTab
                         };
                         chattingSocket.emit('draw', packet);
                     });
                     lc.on('redo', function() {
                         var packet = {
-                            type: 'redo'
+                            type: 'redo',
+                            tab: currentTab
                         };
                         chattingSocket.emit('draw', packet);
                     });
                     lc.on('pan', function(panData) {
                         var packet = {
                             type: 'pan',
+                            tab: currentTab,
                             x: panData.x,
                             y: panData.y
                         };
@@ -438,6 +490,7 @@ var LCANVAS = {
                     lc.on('zoom', function(zoomData) {
                         var packet = {
                             type: 'zoom',
+                            tab: currentTab,
                             amount: zoomData.newScale
                         };
                         chattingSocket.emit('draw', packet);
@@ -446,39 +499,6 @@ var LCANVAS = {
                     // student can't use canvas!
                     // disable literally canvas.
                     canvasDiv.css("pointer-events", "none");
-
-                    // TODO : 탭 확인해서 셋팅되도록 해야함.
-                    chattingSocket.on('draw', function(data) {
-
-                        // packet : 'draw'
-                        // - type
-                        // - content that defended on type.
-
-                        if (data.type == 'shapeSave') {
-                            lc.saveShape(LC.JSONToShape(data.shapeJSON), false, data.previousShapeId);
-                        } else if (data.type == 'pan') {
-                            lc.setPan(data.x, data.y);
-                        } else if (data.type == 'zoom') {
-                            lc.setZoom(data.amount);
-                        } else if (data.type == 'clear') {
-                            lc.clear();
-                        } else if (data.type == 'undo') {
-                            lc.undo();
-                        } else if (data.type == 'redo') {
-                            lc.redo();
-                        } else if (data.type == 'background') {
-                            var image = new Image()
-                            image.src = data.image;
-
-                            lc.backgroundShapes = [LC.createShape(
-                                'Image', {
-                                    image: image
-                                })];
-                            lc.repaintLayer('background', false);
-                        } else {
-                            console.log(data);
-                        }
-                    });
                 }
                 lc_ = lc;
             }
@@ -533,6 +553,7 @@ var LCANVAS = {
 
                 var packet = {
                     type: 'background',
+                    tab: TAB.currentTab,
                     image: e.target.result
                 };
                 chattingSocket.emit('draw', packet);
@@ -556,6 +577,7 @@ var TAB = {
     tabCount: 0,
     tabNum: 0,
     tabType: ["whiteBoard", "textbook", "shareScreen"],
+
     currentTab: null,
     init: function() {
         $("#tabNav").on("click", ".tabBtn", function(event) {
@@ -599,7 +621,7 @@ var TAB = {
     },
     selectTab: function(tabNumber) {
         var captureElement;
-        if ($("#" + TAB.currentTab).hasClass("screenShare")) {
+        if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
             captureElement = $("#" + TAB.currentTab).find("video").get(0);
         } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
             captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
@@ -625,7 +647,7 @@ var TAB = {
         });
         this.currentTab = "tab" + tabNumber;
 
-        if ($("#" + TAB.currentTab).hasClass("screenShare")) {
+        if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
             captureElement = $("#" + TAB.currentTab).find("video").get(0);
         } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
             captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
