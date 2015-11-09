@@ -83,35 +83,35 @@
         </section>
     </main>
     <footer><span>Copyright Nexcos Co., Ltd. All rights reserved</span></footer>
-	<script id="tabBtnTemplate" type="x-tmpl-mustache">
-		<li>
-			<button id="tabBtn{{tabNum}}" class="tabBtn" value={{tabNum}}>tab{{tabNum}}</button>
-			<button class="delTab">x</button>
-		</li>
-	</script>
-	<script id="whiteBoardTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabNum}}" class="tab whiteBoard">
-			<div id="lcanvas{{tabNum}}" class="literally"></div>
-		</div>
-	</script>
-	<script id="textbookTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabNum}}" class="tab textbook">
-			<div id="lcanvas{{tabNum}}" class="literally front"></div>
-			<div class="iframeContainer">
-				{{{textbook}}}
-			</div>
-			<div class="layerControl">
-				<input type="text" placeholder="Textbook URL을 입력하세요.">
-				<button class="getTextbook">가져오기</button>
-			</div>
-		</div>
-	</script>
-	<script id="shareScreenTemplate" type="x-tmpl-mustache">
-		<div id="tab{{tabNum}}" class="tab shareScreen">
-			<video id="screen{{tabNum}}"></video>
-			<div id="lcanvas{{tabNum}}" class="literally front"></div>
-		</div>
-	</script>
+    <script id="tabBtnTemplate" type="x-tmpl-mustache">
+        <li>
+            <button id="tabBtn{{tabNum}}" class="tabBtn" value={{tabNum}}>tab{{tabNum}}</button>
+            <button class="delTab">x</button>
+        </li>
+    </script>
+    <script id="whiteBoardTemplate" type="x-tmpl-mustache">
+        <div id="tab{{tabNum}}" class="tab whiteBoard">
+            <div id="lcanvas{{tabNum}}" class="literally"></div>
+        </div>
+    </script>
+    <script id="textbookTemplate" type="x-tmpl-mustache">
+        <div id="tab{{tabNum}}" class="tab textbook">
+            <div id="lcanvas{{tabNum}}" class="literally front"></div>
+            <div class="iframeContainer">
+                {{{textbook}}}
+            </div>
+            <div class="layerControl">
+                <input type="text" placeholder="Textbook URL을 입력하세요.">
+                <button class="getTextbook">가져오기</button>
+            </div>
+        </div>
+    </script>
+    <script id="shareScreenTemplate" type="x-tmpl-mustache">
+        <div id="tab{{tabNum}}" class="tab shareScreen">
+            <video id="screen{{tabNum}}" autoplay></video>
+            <div id="lcanvas{{tabNum}}" class="literally front"></div>
+        </div>
+    </script>
     <script src="/js/class.js"></script>
 </body>
 

@@ -68,15 +68,30 @@ io.on('connection', function(socket) {
         }
 
     });
-    socket.on('disconnect', function() {
-
-    });
 
     socket.on('disconnect', function() {
         if (socketA == socket) {
             socketA = null;
         } else if (socketB == socket) {
             socketB = null;
+        }
+    });
+
+    socket.on('tab', function(data) {
+
+        // packet : 'tab'
+        // -- type
+        // -- content depended by type
+
+        console.log(data);
+        var targetSocket = null;
+        if (socket == socketA) {
+            targetSocket = socketB;
+        } else if (socket == socketB) {
+            targetSocket = socketA;
+        }
+        if (targetSocket != null) {
+            targetSocket.emit('tab', data);
         }
     });
 });

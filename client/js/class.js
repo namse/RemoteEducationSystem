@@ -55,7 +55,11 @@ function sendInitPacket() {
         loadWebRTC();
         loadChatting();
     }).done(function() {
-
+        if (isTeacher) {
+            TAB.init();
+            TEXTBOOK.init();
+            MENU.init();
+        }
     }).fail(function() {
         alert("error");
     });
@@ -119,7 +123,7 @@ function loadWebRTC() {
             // you can name it anything
             webRTC.joinRoom(roomID);
 
-            initButtons();
+
         });
         //});
     });
@@ -324,7 +328,7 @@ function getClouser(element) {
 
 var CAPTURE = {
 
-    screenCapturePeriod: 5000, //ms
+    screenCapturePeriod: 1000, //ms
     capturer: {}, // key : element(dom), value : timer
 
     run: function(element) {
@@ -558,19 +562,16 @@ var TAB = {
             var tabButton = $(event.target);
             var currentTab = tabButton.val();
             if (currentTab === "+") {
-                this.tabNum++;
-                this.tabCount++;
-
                 if ($("#addTab").hasClass("on")) {
                     $("#addTab").css("display", "none");
                 } else {
                     $("#addTab").css("display", "block");
                 }
                 $("#addTab").toggleClass("on");
-                return;
+            } else {
+                this.selectTab(currentTab);
             }
 
-            this.selectTab(currentTab);
         }.bind(this));
 
         // addTab eventListener
@@ -635,7 +636,7 @@ var TAB = {
 
         if (isTeacher) {
             var packet = {
-                type: 'add',
+                type: 'select',
                 tabNumber: tabNumber
             };
             chattingSocket.emit('tab', packet);
@@ -643,6 +644,8 @@ var TAB = {
 
     },
     addTab: function(tabTemplate) {
+        this.tabNum++;
+        this.tabCount++;
         // add tab
         var template = $("#" + tabTemplate + "Template").html();
         Mustache.parse(template);
@@ -656,24 +659,25 @@ var TAB = {
         this.addTabBnt();
 
         this.selectTab(this.tabNum);
-
-        var captureElement = null;
-        if (tabTemplate === "shareScreen") {
-            getScreenId(function(error, sourceId, screen_constraints) {
-                navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-                navigator.getUserMedia(screen_constraints, function(stream) {
-                    console.log($("#screen" + TAB.currentTab));
-                    $("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
-                }, function(error) {
-                    console.error(error);
+        if (isTeacher) {
+            var captureElement = null;
+            if (tabTemplate === "shareScreen") {
+                getScreenId(function(error, sourceId, screen_constraints) {
+                    navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+                    navigator.getUserMedia(screen_constraints, function(stream) {
+                        console.log($("#screen" + TAB.currentTab));
+                        $("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
+                    }, function(error) {
+                        console.error(error);
+                    });
                 });
-            });
 
-            captureElement = $("#" + TAB.currentTab).find("video").get(0);
-        } else if (tabTemplate === "textbook") {
-            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+                captureElement = $("#" + TAB.currentTab).find("video").get(0);
+            } else if (tabTemplate === "textbook") {
+                captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+            }
+            CAPTURE.run(captureElement);
         }
-        CAPTURE.run(captureElement);
 
 
         LCANVAS.init($("#lcanvas" + this.tabNum));
@@ -712,7 +716,7 @@ var TAB = {
 
         if (isTeacher) {
             var packet = {
-                type: 'add',
+                type: 'delete',
                 tabNumber: tabNumber
             };
             chattingSocket.emit('tab', packet);
@@ -753,7 +757,5 @@ $(window).on("load", function() {
 });
 
 $(document).on("ready", function() {
-    TAB.init();
-    TEXTBOOK.init();
-    MENU.init();
+    initButtons();
 });
