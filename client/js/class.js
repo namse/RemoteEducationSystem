@@ -59,10 +59,47 @@ function sendInitPacket() {
             TAB.init();
             TEXTBOOK.init();
             MENU.init();
+
+            chromeExtensionInstallDetect(chromeExtensionHandler);
         }
     }).fail(function() {
         alert("error");
     });
+}
+
+function chromeExtensionInstallDetect(callback) {
+
+    if (!!navigator.mozGetUserMedia) return callback('not-chrome');
+
+    var extensionid = 'ajhifddimkapgcifgcodmmfdlknahffk';
+
+    var image = document.createElement('img');
+    image.src = 'chrome-extension://' + extensionid + '/icon.png';
+    image.onload = function() {
+        setTimeout(function() {
+            if (!DetectRTC.screen.notInstalled) {
+                callback('installed-enabled');
+            }
+        }, 2000);
+    };
+    image.onerror = function() {
+        DetectRTC.screen.notInstalled = true;
+        callback('not-installed');
+    };
+
+}
+
+function chromeExtensionHandler(param) {
+    if (param === 'not-chrome') {
+        alert("Oups!\nSorry, We Only Support the Chrome Browser.");
+    } else if (param === 'not-installed') {
+        alert("Chrome Extension Dosen't Installed. Please Install.");
+        /*
+        <button onclick="!!navigator.webkitGetUserMedia &amp;&amp; !!window.chrome &amp;&amp; !!chrome.webstore &amp;&amp; !!chrome.webstore.install &amp;&amp; chrome.webstore.install('https://chrome.google.com/webstore/detail/ajhifddimkapgcifgcodmmfdlknahffk', function() {location.reload();})" id="install-button" style="font-size:inherit; padding-bottom:0;">Click to Install</button>
+        */
+    } else if (param === 'installed-enabled') {
+        // cool.
+    }
 }
 
 
@@ -577,8 +614,8 @@ var TAB = {
     tabCount: 0,
     tabNum: 0,
     tabType: ["whiteBoard", "textbook", "shareScreen"],
-
     currentTab: null,
+    streams: {}, // key : tab, value : stream
     init: function() {
         $("#tabNav").on("click", ".tabBtn", function(event) {
             var tabButton = $(event.target);
@@ -689,6 +726,7 @@ var TAB = {
                     navigator.getUserMedia(screen_constraints, function(stream) {
                         console.log($("#screen" + TAB.currentTab));
                         $("#" + TAB.currentTab).find("video").attr("src", URL.createObjectURL(stream));
+                        TAB.streams[TAB.currentTab] = stream;
                     }, function(error) {
                         console.error(error);
                     });
@@ -721,6 +759,18 @@ var TAB = {
         $("#plusTab").before(newTabBtn);
     },
     deleteTab: function(tabNumber) {
+        var captureElement;
+        if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
+            captureElement = $("#" + TAB.currentTab).find("video").get(0);
+            TAB.streams[TAB.currentTab].stop();
+        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+        } else {
+            captureElement = null;
+        }
+        CAPTURE.pause(captureElement);
+
+
         $("#tabBtn" + tabNumber).remove();
         $("#tab" + tabNumber).remove();
 

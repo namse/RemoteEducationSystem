@@ -39,7 +39,7 @@ socketA = socketB = null;
 
 io.on('connection', function(socket) {
     console.log(socket.id);
-    if (socketA == null) {
+    if (socketA === null) {
         socketA = socket;
     } else {
         socketB = socket;
@@ -58,21 +58,21 @@ io.on('connection', function(socket) {
 
         console.log(data);
         var targetSocket = null;
-        if (socket == socketA) {
+        if (socket === socketA) {
             targetSocket = socketB;
-        } else if (socket == socketB) {
+        } else if (socket === socketB) {
             targetSocket = socketA;
         }
-        if (targetSocket != null) {
+        if (targetSocket !== null) {
             targetSocket.emit('draw', data);
         }
 
     });
 
     socket.on('disconnect', function() {
-        if (socketA == socket) {
+        if (socketA === socket) {
             socketA = null;
-        } else if (socketB == socket) {
+        } else if (socketB === socket) {
             socketB = null;
         }
     });
@@ -85,12 +85,12 @@ io.on('connection', function(socket) {
 
         console.log(data);
         var targetSocket = null;
-        if (socket == socketA) {
+        if (socket === socketA) {
             targetSocket = socketB;
-        } else if (socket == socketB) {
+        } else if (socket === socketB) {
             targetSocket = socketA;
         }
-        if (targetSocket != null) {
+        if (targetSocket !== null) {
             targetSocket.emit('tab', data);
         }
     });
