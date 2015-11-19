@@ -101,7 +101,7 @@ io.on('connection', function(socket) {
         // -- content depended by type
 
         if (isTeacher) {
-            sockets[roomID][STUDENTS].foreach(function(studentSocket) {
+            sockets[roomID][STUDENTS].map(function(studentSocket) {
                 studentSocket.emit('draw', data);
             });
         } else {
