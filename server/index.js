@@ -6,6 +6,7 @@ var url = require('url');
 var socketio = require('socket.io');
 var fs = require('fs');
 var signal = require('./signal/server');
+var config = require('getconfig');
 var credentials = {
     key: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.private.pem'),
     cert: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.public.pem'),

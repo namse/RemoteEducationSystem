@@ -125,7 +125,7 @@ module.exports = function(server, config) {
                 url: server.url
             });
         });
-        client.emit('turnservers', credentials);
+        //client.emit('turnservers', credentials);
     });
 
 
