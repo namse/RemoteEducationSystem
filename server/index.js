@@ -137,9 +137,9 @@ io.on('connection', function(socket) {
         // -- content depended by type
 
         if (isTeacher) {
-            for (var studentSocket in sockets[roomID][STUDENTS]) {
+            sockets[roomID][STUDENTS].map(function(studentSocket) {
                 studentSocket.emit('tab', data);
-            }
+            });
         } else {
             console.log("ERROR DRAW : you are not teacher!");
         }
