@@ -474,7 +474,12 @@ var CAPTURE = {
 var LCANVAS = {
     lcanvases: {},
     init: function(canvasDiv) {
-        var tools = this.getCustomCanvasTools(LC);
+        var tools;
+        if ($("#" + TAB.currentTab).hasClass("whiteBoard")) {
+            tools = this.getCustomCanvasTools(LC);
+        } else {
+            tools = LC.defaultTools;
+        }
         var lc_;
         var currentTab = TAB.currentTab;
         canvasDiv.literallycanvas({
@@ -549,7 +554,6 @@ var LCANVAS = {
     },
     getCustomCanvasTools: function(LC) {
         var defaultTools = LC.defaultTools.slice(0); // copy
-        console.log(defaultTools);
 
         for (var i = 0; i < defaultTools.length; i++) {
             var defaultTool = defaultTools[i];
@@ -657,15 +661,17 @@ var TAB = {
         }.bind(this));
     },
     selectTab: function(tabNumber) {
-        var captureElement;
-        if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
-            captureElement = $("#" + TAB.currentTab).find("video").get(0);
-        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
-            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
-        } else {
-            captureElement = null;
+        if (isTeacher) {
+            var captureElement;
+            if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
+                captureElement = $("#" + TAB.currentTab).find("video").get(0);
+            } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+                captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+            } else {
+                captureElement = null;
+            }
+            CAPTURE.pause(captureElement);
         }
-        CAPTURE.pause(captureElement);
 
         //tab
         $(".tab").css("display", "none");
@@ -684,16 +690,16 @@ var TAB = {
         });
         this.currentTab = "tab" + tabNumber;
 
-        if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
-            captureElement = $("#" + TAB.currentTab).find("video").get(0);
-        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
-            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
-        } else {
-            captureElement = null;
-        }
-        CAPTURE.run(captureElement);
-
         if (isTeacher) {
+            if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
+                captureElement = $("#" + TAB.currentTab).find("video").get(0);
+            } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+                captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+            } else {
+                captureElement = null;
+            }
+            CAPTURE.run(captureElement);
+
             var packet = {
                 type: 'select',
                 tabNumber: tabNumber
@@ -759,17 +765,18 @@ var TAB = {
         $("#plusTab").before(newTabBtn);
     },
     deleteTab: function(tabNumber) {
-        var captureElement;
-        if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
-            captureElement = $("#" + TAB.currentTab).find("video").get(0);
-            TAB.streams[TAB.currentTab].stop();
-        } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
-            captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
-        } else {
-            captureElement = null;
+        if (isTeacher) {
+            var captureElement;
+            if ($("#" + TAB.currentTab).hasClass("shareScreen")) {
+                captureElement = $("#" + TAB.currentTab).find("video").get(0);
+                TAB.streams[TAB.currentTab].stop();
+            } else if ($("#" + TAB.currentTab).hasClass("textbook")) {
+                captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+            } else {
+                captureElement = null;
+            }
+            CAPTURE.pause(captureElement);
         }
-        CAPTURE.pause(captureElement);
-
 
         $("#tabBtn" + tabNumber).remove();
         $("#tab" + tabNumber).remove();
