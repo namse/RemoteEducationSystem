@@ -28,9 +28,9 @@ module.exports = function(credentials) {
 
     var httpUrl;
     if (config.server.secure) {
-        httpUrl = "https://localhost:" + port;
+        httpUrl = "https://61.38.158.172:" + port;
     } else {
-        httpUrl = "http://localhost:" + port;
+        httpUrl = "http://61.38.158.172:" + port;
     }
     console.log(yetify.logo() + ' -- signal master is running at: ' + httpUrl);
 };
