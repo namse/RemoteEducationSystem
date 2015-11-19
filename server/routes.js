@@ -16,8 +16,8 @@ module.exports = function(app) {
         res.json({
             isTeacher: req.session.isTeacher,
             roomID: req.session.roomID,
-            webRTCSignalServerURL: 'https://127.0.0.1:8787', ////'https://signaling.simplewebrtc.com:443/'
-            chattingServerURL: 'https://127.0.0.1:' + app.get('port'),
+            webRTCSignalServerURL: 'https://61.38.158.172:8787', ////'https://signaling.simplewebrtc.com:443/'
+            chattingServerURL: 'https://61.38.158.172:' + app.get('port'),
             userName: req.session.userName
         });
     });
