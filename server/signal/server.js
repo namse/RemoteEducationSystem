@@ -10,7 +10,6 @@ module.exports = function(credentials) {
             res.end();
         },
         server = null;
-    console.log("hi");
     // Create an http(s) server instance to that socket.io can listen to
     if (config.server.secure) {
         server = require('https').Server({

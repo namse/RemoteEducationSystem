@@ -13,6 +13,12 @@ var credentials = {
     requestCert: true,
     rejectUnauthorized: false
 };
+var session = require("express-session")({
+    secret: "my-secret",
+    resave: true,
+    saveUninitialized: true
+});
+var sharedsession = require("express-socket.io-session");
 
 //app.use("/test", require('express').static(__dirname.replace('server', 'testClient')));
 app.use(express.static(__dirname + '/../client/'));
@@ -20,6 +26,15 @@ app.set('views', __dirname + '/../client/');
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
+
+// Use express-session middleware for express
+app.use(session);
+
+// const value
+var STUDENTS = 'students';
+var TEACHER = 'teacher';
+
+
 
 // display part
 ///////////////////////////////
@@ -31,23 +46,51 @@ require('./routes.js')(app); // load our routes and pass in our app and fully co
 var server = https.createServer(credentials, app);
 var io = socketio.listen(server); // io for chatting
 
+// Use shared session middleware for socket.io
+// setting autoSave:true
+io.use(sharedsession(session, {
+    autoSave: true
+}));
+
 server.listen(app.get('port'));
 
-//temp
-var socketA, socketB;
-socketA = socketB = null;
 
+// sockets
+// [roomID]
+// ['teacher' or 'students']  
+// 주의 : 선생은 오직 1명.
+
+var sockets = {};
 io.on('connection', function(socket) {
-    console.log(socket.id);
-    if (socketA === null) {
-        socketA = socket;
-    } else {
-        socketB = socket;
+    var roomID = socket.handshake.session.roomID;
+    var isTeacher = socket.handshake.session.isTeacher;
+
+    if (!!!sockets[roomID]) {
+        sockets[roomID] = {
+            'teacher': null,
+            'students': []
+        };
     }
+    if (isTeacher) {
+        if (sockets[roomID][TEACHER] && sockets[roomID][TEACHER] != socket) {
+            console.log("ERROR : teacher duplication, socket : " + socket);
+        }
+        sockets[roomID][TEACHER] = socket;
+    } else {
+        if (sockets[roomID][STUDENTS].indexOf(socket) >= 0) {
+            console.log("ERROR : student duplication, socket : " + socket);
+        }
+        sockets[roomID][STUDENTS].push(socket);
+    }
+
+    socket.join(roomID); // for chatting broadcasting.
+
+    console.log(socket.handshake.session.userData)
+    console.log(socket.id);
+
     socket.on('chat', function(msg) {
         console.log(msg);
-        socket.broadcast.emit('chat', msg);
-        // TODO : send msg to same room
+        socket.broadcast.to(roomID).emit('chat', msg);
     });
 
     socket.on('draw', function(data) {
@@ -56,24 +99,32 @@ io.on('connection', function(socket) {
         // -- type
         // -- content depended by type
 
-        console.log(data);
-        var targetSocket = null;
-        if (socket === socketA) {
-            targetSocket = socketB;
-        } else if (socket === socketB) {
-            targetSocket = socketA;
-        }
-        if (targetSocket !== null) {
-            targetSocket.emit('draw', data);
+        if (isTeacher) {
+            sockets[roomID][STUDENTS].foreach(function(studentSocket) {
+                studentSocket.emit('draw', data);
+            });
+        } else {
+            console.log("ERROR DRAW : you are not teacher!");
         }
 
     });
 
     socket.on('disconnect', function() {
-        if (socketA === socket) {
-            socketA = null;
-        } else if (socketB === socket) {
-            socketB = null;
+        if (isTeacher) {
+            if (sockets[roomID][TEACHER] == socket) {
+                sockets[roomID][TEACHER] = null;
+            } else {
+                console.log("ERROR DISCONNECT : room " + roomID + "\'s teacher is not me! \n\nI : " + socket + "\n\n\n and that teacher socket : " +
+                    sockets[roomID][TEACHER]);
+            }
+
+        } else {
+            var index = sockets[roomID][STUDENTS].indexOf(socket);
+            if (index < 0) {
+                console.log("ERROR DISCONNECT : find index fail");
+            } else {
+                sockets[roomID][STUDENTS].splice(index, 1);
+            }
         }
     });
 
@@ -83,15 +134,12 @@ io.on('connection', function(socket) {
         // -- type
         // -- content depended by type
 
-        console.log(data);
-        var targetSocket = null;
-        if (socket === socketA) {
-            targetSocket = socketB;
-        } else if (socket === socketB) {
-            targetSocket = socketA;
-        }
-        if (targetSocket !== null) {
-            targetSocket.emit('tab', data);
+        if (isTeacher) {
+            sockets[roomID][STUDENTS].foreach(function(studentSocket) {
+                studentSocket.emit('tab', data);
+            });
+        } else {
+            console.log("ERROR DRAW : you are not teacher!");
         }
     });
 });
