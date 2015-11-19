@@ -139,6 +139,14 @@ function loadWebRTC() {
             return webRTCSocket.id;
         };
 
+
+        SimpleWebRTC.prototype.testReadiness = function() {
+            var self = this;
+            //if (this.webrtc.localStream && this.sessionReady) {
+            self.emit('readyToCall', self.connection.getSessionid());
+            //}
+        };
+
         webRTC = new SimpleWebRTC({
             // the id/element dom element that will hold "our" video
             localVideoEl: 'localVideo',
@@ -151,9 +159,8 @@ function loadWebRTC() {
             media: {
                 audio: true,
                 video: true,
-                autoRequestMedia: true
-                    //audio: DetectRTC.hasMicrophone,
-                    //video: DetectRTC.hasWebcam
+                //audio: DetectRTC.hasMicrophone,
+                //video: DetectRTC.hasWebcam
             }
         });
 
