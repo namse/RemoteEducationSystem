@@ -5,9 +5,9 @@ module.exports = function(app) {
     });
 
     app.get('/class', function(req, res) {
-        req.session.isTeacher = (req.param('isTeacher') === '1');
-        req.session.roomID = req.param('roomID');
-        req.session.userName = req.param('userName');
+        req.session.isTeacher = ((req.params.isTeacher) === '1');
+        req.session.roomID = req.params.roomID;
+        req.session.userName = req.params.userName;
         console.log(req.session.isTeacher);
         res.render('../client/class.html');
     });

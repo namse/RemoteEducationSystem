@@ -139,7 +139,7 @@ io.on('connection', function(socket) {
         if (isTeacher) {
             for (var studentSocket in sockets[roomID][STUDENTS]) {
                 studentSocket.emit('tab', data);
-            };
+            }
         } else {
             console.log("ERROR DRAW : you are not teacher!");
         }
