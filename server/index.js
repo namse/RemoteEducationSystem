@@ -6,7 +6,6 @@ var url = require('url');
 var socketio = require('socket.io');
 var fs = require('fs');
 var signal = require('./signal/server');
-var config = require('getconfig');
 var credentials = {
     key: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.private.pem'),
     cert: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.public.pem'),
@@ -146,4 +145,12 @@ io.on('connection', function(socket) {
     });
 });
 
-signal(credentials);
+
+var server2 = https.createServer(credentials, app);
+var io2 = socketio.listen(server); // io for chatting
+var p2pserver = require('socket.io-p2p-server').Server
+server2.listen(8787);
+io2.use(p2pserver);
+
+
+//signal(credentials);

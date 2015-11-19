@@ -25,7 +25,7 @@ module.exports = function(server, config) {
             if (!details) return;
 
             var otherClient = io.sockets.adapter.nsp.connected[details.to];
-            console.log("other client : " + otherClient);
+            console.log("other client : " + otherClient.id);
             if (!otherClient) return;
 
             details.from = client.id;
@@ -50,10 +50,12 @@ module.exports = function(server, config) {
         function join(name, cb) {
             // sanity check
             if (typeof name !== 'string') return;
+            console.log("client " + client.id + " join in " + name);
             // check if maximum number of clients reached
             if (config.rooms && config.rooms.maxClients > 0 &&
                 clientsInRoom(name) >= config.rooms.maxClients) {
                 safeCb(cb)('full');
+                console.log("client " + client.id + " join in " + name + " fail");
                 return;
             }
             // leave any existing rooms
