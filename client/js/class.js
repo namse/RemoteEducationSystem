@@ -150,7 +150,8 @@ function loadWebRTC() {
             connection: webRTCSocket,
             media: {
                 audio: true,
-                video: true
+                video: true,
+                autoRequestMedia: true
                     //audio: DetectRTC.hasMicrophone,
                     //video: DetectRTC.hasWebcam
             }
