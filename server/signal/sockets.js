@@ -11,8 +11,6 @@ module.exports = function(server, config) {
     }
 
     io.sockets.on('connection', function(client) {
-        console.log("client : " +
-            client.id);
         client.resources = {
             screen: false,
             video: true,
@@ -21,11 +19,9 @@ module.exports = function(server, config) {
 
         // pass a message to another id
         client.on('message', function(details) {
-            console.log("m : " + JSON.stringify(details) + "\n");
             if (!details) return;
 
             var otherClient = io.sockets.adapter.nsp.connected[details.to];
-            console.log("other client : " + otherClient);
             if (!otherClient) return;
 
             details.from = client.id;
@@ -68,18 +64,13 @@ module.exports = function(server, config) {
             // leave any existing rooms
             removeFeed();
             safeCb(cb)(null, describeRoom(name));
-            client.join(name, function(err) {
-                console.log("is join successful?");
-                console.log(err);
-                console.log(client.rooms);
-            });
+            client.join(name, function(err) {});
             client.room = name;
         }
 
         // we don't want to pass "leave" directly because the
         // event type string of "socket end" gets passed too.
         client.on('disconnect', function() {
-            console.log("all Rooms : " + client.rooms + '\n');
             removeFeed();
         });
         client.on('leave', function() {
@@ -105,11 +96,7 @@ module.exports = function(server, config) {
 
         // support for logging full webrtc traces to stdout
         // useful for large-scale error monitoring
-        client.on('trace', function(data) {
-            console.log('trace', JSON.stringify(
-                [data.type, data.session, data.prefix, data.peer, data.time, data.value]
-            ));
-        });
+        client.on('trace', function(data) {});
 
 
         // tell client about stun and turn servers and generate nonces
@@ -135,32 +122,24 @@ module.exports = function(server, config) {
 
     function describeRoom(name) {
         var room = io.sockets.adapter.rooms[name];
-        console.log("droom : " +
-            room);
         var result = {
             clients: {}
         };
         if (room) {
             for (var id in room) {
-                console.log("dID = " + id);
                 var client = io.sockets.adapter.nsp.connected[id];
                 result.clients[id] = client.resources;
             }
         }
-        console.log("result : " + result + "\n\n");
         return result;
     }
 
     function clientsInRoom(name) {
         var room = io.sockets.adapter.rooms[name];
-        console.log("room : " + room);
         if (room) {
             var length = Object.keys(room).length;
-            console.log("length : " + length + '\n');
             return length;
         } else {
-            console.log("length : 0\n");
-
             return 0;
         }
 
