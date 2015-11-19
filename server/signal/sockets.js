@@ -32,15 +32,6 @@ module.exports = function(server, config) {
             otherClient.emit('message', details);
         });
 
-        client.on('shareScreen', function() {
-            client.resources.screen = true;
-        });
-
-        client.on('unshareScreen', function(type) {
-            client.resources.screen = false;
-            removeFeed('screen');
-        });
-
         client.on('join', join);
 
         function removeFeed(type) {

@@ -139,14 +139,6 @@ function loadWebRTC() {
             return webRTCSocket.id;
         };
 
-
-        SimpleWebRTC.prototype.testReadiness = function() {
-            var self = this;
-            //if (this.webrtc.localStream && this.sessionReady) {
-            self.emit('readyToCall', self.connection.getSessionid());
-            //}
-        };
-
         webRTC = new SimpleWebRTC({
             // the id/element dom element that will hold "our" video
             localVideoEl: 'localVideo',
@@ -154,17 +146,17 @@ function loadWebRTC() {
             remoteVideosEl: 'remoteVideos',
             // immediately ask for camera access
             autoRequestMedia: true,
-            //url: webRTCSignalServerURL,
-            //connection: webRTCSocket,
+            url: webRTCSignalServerURL,
+            connection: webRTCSocket,
             media: {
                 audio: true,
-                video: true,
-                //audio: DetectRTC.hasMicrophone,
-                //video: DetectRTC.hasWebcam
+                video: true
+                    //audio: DetectRTC.hasMicrophone,
+                    //video: DetectRTC.hasWebcam
             },
             peerConnectionConfig: {
                 iceServers: [{
-                    "url": "stun4.l.google.com:19302"
+                    "url": "stun:61.38.158.151:3478"
                 }]
             }
         });

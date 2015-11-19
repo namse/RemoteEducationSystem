@@ -1,6 +1,6 @@
 {
     "isDev": true,
-    "logLevel": 3,
+    "logLevel": 2,
     "server": {
         "port": 8787,
         "secure": true,
@@ -11,7 +11,7 @@
         "maxClients": 2 /* maximum number of clients per room. 0 = no limit */
     },
     "stunservers": [{
-        "url": "stun:stun.l.google.com:19302"
+        "url": "stun:61.38.158.151:3478"
     }],
     "turnservers": [
         /*
@@ -20,5 +20,5 @@
           "expiry": 86400 }
           */
     ],
-    "ip": "61.38.158.172" //"127.0.0.1" // //"127.0.0.1" //61.38.158.172
+    "ip": "127.0.0.1" //"61.38.158.172" //// //"127.0.0.1" //61.38.158.172
 }
