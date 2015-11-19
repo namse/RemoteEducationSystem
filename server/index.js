@@ -87,7 +87,7 @@ io.on('connection', function(socket) {
     socket.join(roomID); // for chatting broadcasting.
 
     console.log(socket.handshake.session.userData);
-    console.log(socket.id);
+    console.log(socket.id + " is teacher? : " + isTeacher);
 
     socket.on('chat', function(msg) {
         console.log(msg);
@@ -105,7 +105,7 @@ io.on('connection', function(socket) {
                 studentSocket.emit('draw', data);
             });
         } else {
-            console.log("ERROR DRAW : you are not teacher!");
+            console.log("[" + socket.id + "]ERROR DRAW : you are not teacher!");
         }
 
     });
@@ -115,14 +115,13 @@ io.on('connection', function(socket) {
             if (sockets[roomID][TEACHER] == socket) {
                 sockets[roomID][TEACHER] = null;
             } else {
-                console.log("ERROR DISCONNECT : room " + roomID + "\'s teacher is not me! \n\nI : " + socket + "\n\n\n and that teacher socket : " +
+                console.log("[" + socket.id + "]ERROR DISCONNECT : room " + roomID + "\'s teacher is not me! \n\nI : " + socket + "\n\n\n and that teacher socket : " +
                     sockets[roomID][TEACHER]);
             }
-
         } else {
             var index = sockets[roomID][STUDENTS].indexOf(socket);
             if (index < 0) {
-                console.log("ERROR DISCONNECT : find index fail");
+                console.log("[" + socket.id + "]ERROR DISCONNECT : find index fail");
             } else {
                 sockets[roomID][STUDENTS].splice(index, 1);
                 console.log("socket " + socket.id + " Disconnect Success~ bye! ");
@@ -141,7 +140,7 @@ io.on('connection', function(socket) {
                 studentSocket.emit('tab', data);
             });
         } else {
-            console.log("ERROR DRAW : you are not teacher!");
+            console.log("[" + socket.id + "]ERROR DRAW : you are not teacher!");
         }
     });
 });
