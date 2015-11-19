@@ -161,6 +161,11 @@ function loadWebRTC() {
                 video: true,
                 //audio: DetectRTC.hasMicrophone,
                 //video: DetectRTC.hasWebcam
+            },
+            peerConnectionConfig: {
+                iceServers: [{
+                    "url": "stun4.l.google.com:19302"
+                }]
             }
         });
 
