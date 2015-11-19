@@ -149,8 +149,10 @@ function loadWebRTC() {
             url: webRTCSignalServerURL,
             connection: webRTCSocket,
             media: {
-                audio: DetectRTC.hasMicrophone,
-                video: DetectRTC.hasWebcam
+                audio: true,
+                video: true
+                    //audio: DetectRTC.hasMicrophone,
+                    //video: DetectRTC.hasWebcam
             }
         });
 
