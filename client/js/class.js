@@ -154,7 +154,7 @@ function loadWebRTC() {
             remoteVideosEl: 'remoteVideos',
             // immediately ask for camera access
             autoRequestMedia: true,
-            url: webRTCSignalServerURL,
+            //url: webRTCSignalServerURL,
             connection: webRTCSocket,
             media: {
                 audio: true,
