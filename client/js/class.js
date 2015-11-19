@@ -155,7 +155,7 @@ function loadWebRTC() {
             // immediately ask for camera access
             autoRequestMedia: true,
             //url: webRTCSignalServerURL,
-            connection: webRTCSocket,
+            //connection: webRTCSocket,
             media: {
                 audio: true,
                 video: true,
