@@ -158,8 +158,15 @@ function loadWebRTC() {
             url: webRTCSignalServerURL,
             connection: webRTCSocket,
             media: {
-                audio: DetectRTC.hasMicrophone,
-                video: DetectRTC.hasWebcam
+                audio: true,
+                video: true
+                    //audio: DetectRTC.hasMicrophone,
+                    //video: DetectRTC.hasWebcam
+            },
+            peerConnectionConfig: {
+                iceServers: [{
+                    "url": "stun:61.38.158.151:3478"
+                }]
             }
         });
 

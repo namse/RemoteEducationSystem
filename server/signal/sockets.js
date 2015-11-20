@@ -11,6 +11,8 @@ module.exports = function(server, config) {
     }
 
     io.sockets.on('connection', function(client) {
+        console.log("client : " +
+            client.id);
         client.resources = {
             screen: false,
             video: true,
@@ -19,22 +21,15 @@ module.exports = function(server, config) {
 
         // pass a message to another id
         client.on('message', function(details) {
+            console.log("m : " + JSON.stringify(details) + "\n");
             if (!details) return;
 
             var otherClient = io.sockets.adapter.nsp.connected[details.to];
+            console.log("other client : " + otherClient.id);
             if (!otherClient) return;
 
             details.from = client.id;
             otherClient.emit('message', details);
-        });
-
-        client.on('shareScreen', function() {
-            client.resources.screen = true;
-        });
-
-        client.on('unshareScreen', function(type) {
-            client.resources.screen = false;
-            removeFeed('screen');
         });
 
         client.on('join', join);
@@ -55,22 +50,29 @@ module.exports = function(server, config) {
         function join(name, cb) {
             // sanity check
             if (typeof name !== 'string') return;
+            console.log("client " + client.id + " join in " + name);
             // check if maximum number of clients reached
             if (config.rooms && config.rooms.maxClients > 0 &&
                 clientsInRoom(name) >= config.rooms.maxClients) {
                 safeCb(cb)('full');
+                console.log("client " + client.id + " join in " + name + " fail");
                 return;
             }
             // leave any existing rooms
             removeFeed();
             safeCb(cb)(null, describeRoom(name));
-            client.join(name, function(err) {});
+            client.join(name, function(err) {
+                console.log("is join successful?");
+                console.log(err);
+                console.log(client.rooms);
+            });
             client.room = name;
         }
 
         // we don't want to pass "leave" directly because the
         // event type string of "socket end" gets passed too.
         client.on('disconnect', function() {
+            console.log("all Rooms : " + client.rooms + '\n');
             removeFeed();
         });
         client.on('leave', function() {
@@ -116,7 +118,7 @@ module.exports = function(server, config) {
                 url: server.url
             });
         });
-        client.emit('turnservers', credentials);
+        //client.emit('turnservers', credentials);
     });
 
 
