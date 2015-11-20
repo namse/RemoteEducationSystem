@@ -52,7 +52,7 @@ function sendInitPacket() {
         chattingServerURL = data.chattingServerURL;
         userName = data.userName;
 
-        loadWebRTC();
+        
         loadChatting();
     }).done(function() {
         if (isTeacher) {
@@ -60,6 +60,7 @@ function sendInitPacket() {
             TEXTBOOK.init();
             MENU.init();
 
+            loadWebRTC();
             chromeExtensionInstallDetect(chromeExtensionHandler);
         }
     }).fail(function() {
@@ -139,11 +140,19 @@ function loadWebRTC() {
             return webRTCSocket.id;
         };
 
+        // TODO: video 두개로 만들기 테스트 해주세요.
+        // isTeacher는 맞게 들어오는 것 같습니다.
+        var localVideo = "studentVideo";
+        var remoteVideo = "teacherVideo";
+        if (isTeacher) {
+            localVideo = "teacherVideo";
+            remoteVideo = "studentVideo";
+        }
         webRTC = new SimpleWebRTC({
             // the id/element dom element that will hold "our" video
-            localVideoEl: 'localVideo',
+            localVideoEl: localVideo,
             // the id/element dom element that will hold remote videos
-            remoteVideosEl: 'remoteVideos',
+            remoteVideosEl: remoteVideo,
             // immediately ask for camera access
             autoRequestMedia: true,
             url: webRTCSignalServerURL,
@@ -291,16 +300,16 @@ function addChatMessage(data, options) {
     }
 
     var $usernameDiv = $('<span class="userName"/>')
-        .text(data.userName)
-        .css('color', getUsernameColor(data.userName));
-    var $messageBodyDiv = $('<span class="messageBody">')
-        .text(data.message);
+        .text(data.userName);
+    var $messageBodyDiv = $('<div class="messageBody">')
+        .text(data.message)
+        .css('background-color', getUsernameColor(data.userName));
 
     var typingClass = data.typing ? 'typing' : '';
     var $messageDiv = $('<li class="message"/>')
         .data('userName', data.userName)
         .addClass(typingClass)
-        .append($usernameDiv, $messageBodyDiv);
+        .append($usernameDiv, $('<br>'), $messageBodyDiv);
 
     addMessageElement($messageDiv, options);
 }
@@ -380,6 +389,7 @@ function initButtons() {
 var MENU = {
     isMuted: false,
     isCameraPause: false,
+    isCanvas: true,
     init: function() {
         $("#changeLayer").on("click", this.layerControl.bind(this));
     },
@@ -389,12 +399,14 @@ var MENU = {
     cameraControl: function() {
 
     },
-    layerControl: function() {
+    layerControl: function(event) {
         var canvas = $("#" + TAB.currentTab).find(".literally");
         if (canvas.css("pointer-events") != "none") {
             canvas.css("pointer-events", "none");
+            $(event.target).css("background-image", "url('../image/layer_off.png')");
         } else {
             canvas.css("pointer-events", "auto");
+            $(event.target).css("background-image", "url('../image/layer_on.png')");
         }
     }
 }

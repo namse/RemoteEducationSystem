@@ -1,25 +1,32 @@
 <html>
 
 <head>
-    <title>Remote Education System</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<title>Remote Education System</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
+	<link rel="stylesheet" href="/css/style.css">
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
 
 <body>
-    <header>
-        <div id="logo">
-            <h1>Video Call Education Service</h1></div>
-    </header>
-    <main id="indexPage">
-        <button id="classBtn" type="button">Start!</button>
-    </main>
-    <footer>
-        <span>Copyright Nexcos Co., Ltd. All rights reserved</span>
-    </footer>
-    <script src="/js/index.js"></script>
+	<header>
+		<div>
+			<img id="logo" src="/image/logo.png">
+			<img id="wave" src="/image/hd_wave.png">
+		</div>
+	</header>
+	<main id="indexPage">
+		<div>
+			<span>Your Name</span><input type="text" id="userName" name="userName"><br>
+			<input type="radio" class="isTeacher" name="isTeacher" value="1" checked><span>Teacher</span>
+			<input type="radio" class="isTeacher" name="isTeacher" value="0"><span>Student</span><br>
+			<span>Room Name</span><input type="text" id="roomID" name="roomID"><br>
+			<button type="button" id="classBtn">START</button>
+		</div>
+	</main>
+	<footer>
+		<span>Copyright Nexcos Co., Ltd. All rights reserved</span>
+	</footer>
+	<script src="/js/index.js"></script>
 </body>
-
 </html>

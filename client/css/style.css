@@ -1,134 +1,136 @@
 /* CSS RESET */
 html,
 body {
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 html {
-    overflow-y: scroll;
-    font-size: 10px;
-    font: inherit;
+	overflow-y: scroll;
+	font-size: 10px;
+	font: inherit;
 }
 
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,form,fieldset,p,button {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    color: #333;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: #333;
 }
 
 header,aside,article,nav,main,section,details,figcaption,figure,footer,hgroup,menu {
-    display: block;
+	display: block;
 }
 
 img,fieldset,iframe {
-    border: 0 none
+	border: 0 none
 }
 
 input,select,button {
-    vertical-align: middle;
+	vertical-align: middle;
 }
 
 img {
-    max-width: 100%;
+	max-width: 100%;
 }
 
 label,button {
-    cursor: pointer
+	cursor: pointer
 }
 
 button {
-    margin: 0;
-    padding: 0;
-    background-color: transparent
+	margin: 0;
+	padding: 0;
+	background-color: transparent
 }
 
 a {
-    text-decoration: none;
-    color: #333
+	text-decoration: none;
+	color: #333
 }
 
 option {
-    padding-right: 6px
+	padding-right: 6px
 }
 
 table {
-    border-collapse: collapse;
-    border-spacing: 0
+	border-collapse: collapse;
+	border-spacing: 0
 }
+ol,ul { list-style: none }
 
-ol,ul {
-    list-style: none
+
+body {
+	background-color: #EDEDED;
 }
-
 header {
-    position: fixed;
-    width: 100%;
-    height: 37px;
-    background-color: #189159;
-    box-shadow: 0px 2px 2px #282828;
-    z-index: 999;
+	position: fixed;
+	width: 100%;
+	height: 33px;
+	background: linear-gradient(#DADADA, #AAAAAA);
+	box-shadow: 0px 1px 2px #b2b2b2;
+	z-index: 999;
 }
 
 header #logo {
-    position: absolute;
-    left: 24px;
-    line-height: 36px;
+	position: relative;
+	top: -5px;
+	left: 20px;
+	height: 25px;
+	z-index: 10;
 }
-
-header #logo h1 {
-    font-size: 18px;
-    color: #fff;
+header #wave {
+	position: relative;
+	top: -1px;
+	height: 34px;
+	opacity: 0.7;
 }
 header #clock {
-    position: absolute;
-    top: 7px;
-    right: 12px;
-    background-color: #147B4B;
-    width: 100px;
-    height: 25px;
-    box-shadow: 0px 1px 2px #555 inset;
-    border-radius: 16px;
-    text-align: center;
+	position: absolute;
+	top: 7px;
+	right: 12px;
+	background-color: #147B4B;
+	width: 100px;
+	height: 20px;
+	box-shadow: 0px 2px 2px #555 inset;
+	border-radius: 16px;
+	text-align: center;
 }
 header #clock span {
-    color: white;
+	color: white;
 }
 
 nav {
-    position: fixed;
-    top: 37px;
-    width: 100%;
-    height: 40px;
-    background: -webkit-linear-gradient(#4e4e4e, #2E2E2E);
-    background: linear-gradient(#4e4e4e, #2E2E2E);
-    line-height: 40px;
-    z-index: 900;
+	position: fixed;
+	top: 33px;
+	width: 100%;
+	height: 33px;
+	background-color: #5B301B;
+	line-height: 40px;
+	z-index: 900;
 }
 
 nav .navSpliter {
-    display: inline;
-    height: 50%;
-    margin: 0 4px;
-    margin-top: 11px;
-    border-right: 1px solid #111;
-    float: right;
+	display: inline;
+	height: 50%;
+	margin: 0 4px;
+	margin-top: 11px;
+	border-right: 1px solid #1B0E08;
+	float: right;
 }
 
 nav span {
-    color: white;
-    font-size: 12px;
+	color: white;
+	font-size: 12px;
 }
 
 nav button {
-    float: left;
-    width: 40px;
-    height: 100%;
-    text-align: center;
-    color: white;
+	float: left;
+	width: 38px;
+	height: 100%;
+	text-align: center;
+	color: white;
 	background-repeat: no-repeat;
-	background-size: 25px 25px;
 	background-position: center;
 }
 nav #muteBtn {
@@ -138,91 +140,119 @@ nav #cameraPauseBtn {
 	background-image: url("../image/video_on.png");
 }
 nav #changeLayer {
-	background-image: url("../image/layer.png");
+	background-image: url("../image/layer_on.png");
 }
 nav #settingBtn {
 	background-image: url("../image/setting.png");
 }
 nav button:hover {
-    background-color: #2E2E2E;
+	background-color: #B75A31;
 }
 
 nav > div {
-    box-sizing: border-box;
-    position: relative;
-    float: left;
-    padding: 0px 4px;
-    text-align: center;
+	box-sizing: border-box;
+	position: relative;
+	float: left;
+	padding: 0px 4px;
+	text-align: center;
 }
 
 nav #client {
-    width: 300px;
-    border-right: 1px solid #111;
+	width: 225px;
+	border-right: 1px solid #111;
+	height: 100%;
 }
 
 nav #client #myInfo {
-    float: left;
-    padding-left: 20px;
+	float: left;
+	padding-left: 20px;
+	height: 100%;
 }
-
+nav #client #myInfo span {
+	position: relative;
+	top: -5px;
+}
 nav #client #cameraPauseBtn {
-    float: right;
+	float: right;
 }
 
 nav #client #muteBtn {
-    float: right;
+	float: right;
 }
 
 nav #fileIO {
-    min-width: 80px;
+	min-width: 80px;
 }
 
 nav #canvasControl {
-    min-width: 205px;
+	min-width: 205px;
 }
 
 nav #canvasControl .navSpliter {
-    float: left;
+	float: left;
 }
 
 nav #setting {
-    float: right;
+	float: right;
 }
 
 /* main */
 main {
 	position: relative;
-	top: 77px;
+	top: 66px;
 	width: 100%;
 	height: 618px;
+	
 }
 
+#indexPage > div {
+	position: relative;
+	left: 80px;
+	width: 320px;
+	height: 190px;
+	padding: 20px;
+	border: 1px solid #aaa;
+	border-radius: 15px;
+	text-align: center;
+	line-height: 42px;
+}
+#indexPage input[type="text"] {
+	width: 120px;
+	height: 28px;
+	text-indent: 10px;
+}
+#indexPage input[type="radio"] {
+	width: 16px;
+	height: 16px;
+}
+#indexPage span {
+	margin: 0 10px;
+}
 #indexPage #classBtn {
-    margin-top: 300px;
-    margin-left: 300px;
-    width: 200px;
-    height: 80px;
-    border-radius: 12px;
-    background-color: #189159;
-    font-size: 24px;
-    color: white;
+	width: 90px;
+	height: 40px;
+	margin-top: 20px;
+	border-radius: 10px;
+	background-color: #5B301B;
+	font-size: 14px;
+	color: white;
 }
 
 main > section {
-    position: relative;
-    float: left;
-    box-sizing: border-box;
+	position: relative;
+	float: left;
+	box-sizing: border-box;
 }
 
 
 #communicationArea {
-    width: 260px;
-    height: 100%;
-	padding-left: 12px;
-	padding-right: 6px;
+	width: 224px;
+	height: 100%;
+	padding-left: 10px;
+	padding-right: 5px;
 }
 #communicationArea > div {
-	border: 1px solid #b8b8b8;
+	border: 1px solid #999;
 	border-radius: 6px;
 	margin-top: 10px;
 	background-color: white;
@@ -230,82 +260,74 @@ main > section {
 }
 
 /* 화상 비디오 */
-#communicationArea #videos {
-    position: relative;
-    width: 100%;
-    height: 202px;
-	overflow-y: auto;
+#communicationArea .video {
+	position: relative;
+	width: 100%;
+	height: 170px;
+	overflow: hidden;
 }
-
-#communicationArea #videos video {
-    float: left;
-    width: 120px;
-    height: 100px;
+#communicationArea .videoInfo {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 25px;
+	z-index: 100;
 }
-
-#communicationArea #localVideo {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 100;
+#communicationArea .videoInfoShadow {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 25px;
+	background-color: #000;
+	opacity: 0.8;
+	z-index: 50;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
 }
-
-/* 접속자 리스트 */
-#communicationArea #users {
-    width: 100%;
-    height: 137px;
-	padding: 5px;
-	font-weight: 600;
-}
-#communicationArea .moduleHead {
-    width: 100%;
-    height: 38px;
-    padding: 0 10px;
-    line-height: 38px;
-    box-sizing: border-box;
-	font-size: 14px;
-	color: #666;
-	font-weight: 600;
-}
-#communicationArea #users ul {
-    border-top: 1px solid #b8b8b8;
-	padding: 0 10px;
-	font-size: 12px;
-	height: 85px;
-	overflow-y: auto;
-}
-#communicationArea #users li {
-	height: 40px;
-	line-height: 40px;
-	color: #666;
+#communicationArea .video video {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 10;
 }
 
 /* 채팅 */
 #communicationArea .chat {
 	width: 100%;
-	height: 250px;
+	height: 260px;
 	padding: 2px 7px;
+	background-color: #BBD9F3;
+}
+#communicationArea .chatHead {
+	padding: 7px 12px;
+	font-size: 14px;
 }
 #communicationArea .chat .messages {
-	height: 140px;
+	background-color: #fff;
+	height: 157px;
 	overflow-y: auto;
-	padding: 12px 5px 12px 5px;
+	padding: 10px 5px 10px 5px;
 	border: 1px solid #b8b8b8;
 }
-
 #communicationArea .chat .username {
-    float: left;
-    font-weight: 700;
-    overflow: hidden;
-    padding-right: 15px;
-    text-align: right;
+	font-size: 12px;
+	font-weight: 700;
+	padding-right: 15px;
+}
+#communicationArea .chat .messageBody {
+	display: inline-block;
+	border: 1px solid #ccc;
+	padding: 5px 7px;
+	font-size: 13px;
+	border-radius: 5px;
+	margin: 2px 0 4px 0;
 }
 #communicationArea .chat .chatInput {
 	width: 100%;
 	padding-top: 8px;
 }
 #communicationArea .chat .inputMessage {
-	width: 170px;
+	width: 138px;
 	height: 25px;
 	border-radius: 2px;
 	border: 1px solid #ccc;
@@ -314,7 +336,7 @@ main > section {
 #communicationArea .chat .chatInput button {
 	width: 48px;
 	height: 25px;
-	background-color: #189159;
+	background-color: #B75A31;
 	color: white;
 	font-size: 10px;
 	font-weight: 600;
@@ -323,8 +345,8 @@ main > section {
 }
 
 #canvasArea {
-    width: 730px;
-    height: 100%;
+	width: 770px;
+	height: 100%;
 	padding: 10px 0 0 6px;
 }
 #canvasArea #tabNav {
@@ -335,19 +357,19 @@ main > section {
 }
 #canvasArea #tabNav li {
 	position: relative;
-    float: left;
-    width: 10%;
+	float: left;
+	width: 10%;
 }
 #canvasArea #tabNav .tabBtn {
-    width: 100%;
-    height: 22px;
-    line-height: 22px;
+	width: 100%;
+	height: 22px;
+	line-height: 22px;
 	border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    background-color: #fff;
-    border: 1px solid #b8b8b8;
-    border-bottom: none;
-    color: #555;
+	border-top-right-radius: 6px;
+	background-color: #fff;
+	border: 1px solid #b8b8b8;
+	border-bottom: none;
+	color: #555;
 	text-align: left;
 	text-indent: 12px;
 }
@@ -364,40 +386,40 @@ main > section {
 	color: #555;
 }
 #canvasArea #tabNav .tabBtn:hover {
-    background-color: #bbb;
+	background-color: #bbb;
 }
 #canvasArea #addTab {
-    width: 92px;
-    height: 107px;
-    border: 1px solid #999;
-    background-color: #fff;
+	width: 92px;
+	height: 107px;
+	border: 1px solid #999;
+	background-color: #fff;
 	display: none;
 }
 
 #canvasArea #addTab button {
-    margin: 5px 10px;
-    width: 80%;
-    height: 25px;
-    background-color: #43A047;
+	margin: 5px 10px;
+	width: 80%;
+	height: 25px;
+	background-color: #B75A31;
 	font-size: 12px;
-    color: white;
+	color: white;
 }
 
 #canvasArea #tabs {
-    position: relative;
+	position: relative;
 	top: -1px;
-    width: 100%;
-    height: 588px;
-    background-color: #fff;
-    border: 1px solid #b8b8b8;
+	width: 100%;
+	height: 598px;
+	background-color: #fff;
+	border: 1px solid #b8b8b8;
 	padding: 5px;
 	box-sizing: border-box;
 }
 
 #canvasArea #tabs .tab {
-    position: absolute;
-    width: 712px;
-    height: 577px;
+	position: absolute;
+	width: 752px;
+	height: 587px;
 }
 #canvasArea .tab .layerControl {
 	position: absolute;
@@ -418,16 +440,16 @@ main > section {
 	width: 80px;
 	height: 25px;
 	color: white;
-	background-color: #189159;
+	background-color: #B75A31;
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
 	box-shadow: inset 1px 1px 1px #ddd;
 }
 #canvasArea .textbook .iframeContainer {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+	position: absolute;
+	width: 100%;
+	height: 100%;
 	z-index: 50;
 	overflow: auto;
 }
@@ -445,15 +467,15 @@ main > section {
 	overflow: auto;
 }
 footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 25px;
-    text-align: center;
-    line-height: 28px;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	height: 25px;
+	text-align: center;
+	line-height: 28px;
 }
 
 footer span {
-    font-size: 10px;
-    color: #aaa;
+	font-size: 10px;
+	color: #aaa;
 }

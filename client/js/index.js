@@ -5,6 +5,20 @@ $(window).on("load", function() {
         // - roomID : string of room ID.
         // - userName : string of user name
         // 주의 : isTeacher은 서버에서 true, false로 바꿀거임. class.js에는 isTeacher를 true or false로 받을 수 있음.
-        window.open("/class?isTeacher=1&roomID=test&userName=Namse", "Remote Education System", "width=1080,height=720,scrollbars=no,toolbar=no");
+
+        var userName = $("#userName").val();
+        var isTeacher = $("input:radio[name='isTeacher']:checked").val();
+        var roomID = $("#roomID").val();
+
+        if (!userName) {
+        	alert("Please enter your name");
+        	return;
+        } else if (!roomID) {
+        	alert("Please enter the room name");
+        	return;
+        }
+
+        window.open("/class?isTeacher=" + isTeacher + "&roomID=" + roomID + "&userName=" + userName,
+        	"Remote Education System", "width=1080,height=720,scrollbars=no,toolbar=no");
     });
 });

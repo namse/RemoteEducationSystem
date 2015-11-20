@@ -36,11 +36,11 @@
 }
 
 .literally .button-style-1.selected:not(.disabled) {
-    background-color: #a1d9fe;
+    background-color: #aaa;
 }
 
 .literally .button-style-1:hover:not(.disabled) {
-    border-color: #a1d9fe;
+    border-color: #888;
 }
 
 .literally .button-style-1.disabled {
@@ -131,11 +131,11 @@
 }
 
 .literally .lc-picker .toolbar-button.selected:not(.disabled) {
-    background-color: #a1d9fe
+    background-color: #aaa;
 }
 
 .literally .lc-picker .toolbar-button:hover:not(.disabled) {
-    border-color: #a1d9fe
+    border-color: #888;
 }
 
 .literally .lc-picker .toolbar-button.disabled {
@@ -171,7 +171,7 @@
 }
 
 .literally .color-well.open {
-    background-color: #a1d9fe
+    background-color: #aaa
 }
 
 .literally .color-well-color-container {
@@ -191,11 +191,11 @@
 }
 
 .literally .color-well-color-container.selected:not(.disabled) {
-    background-color: #a1d9fe
+    background-color: #aaa
 }
 
 .literally .color-well-color-container:hover:not(.disabled) {
-    border-color: #a1d9fe
+    border-color: #888
 }
 
 .literally .color-well-color-container.disabled {
@@ -287,11 +287,11 @@
 }
 
 .literally .horz-toolbar .square-toolbar-button.selected:not(.disabled) {
-    background-color: #a1d9fe
+    background-color: #aaa
 }
 
 .literally .horz-toolbar .square-toolbar-button:hover:not(.disabled) {
-    border-color: #a1d9fe
+    border-color: #888
 }
 
 .literally .horz-toolbar .square-toolbar-button.disabled {
