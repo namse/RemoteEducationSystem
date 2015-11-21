@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
 
-    "name": "RemoteEducationSystemCurrentTabCaptureExtension",
+    "name": "CurrentTabCaptureExtension",
     "description": "RemoteEducationSystemCurrentTabCaptureExtension",
-    "version": "1.0",
+    "version": "1.1",
 
     "background": {
         "scripts": ["background.js"]
@@ -14,7 +14,13 @@
         "<all_urls>"
     ],
     "content_scripts": [{
-        "matches": ["https://192.168.0.2:1234/*"],
+        "matches": ["https://61.38.158.172:1234/*"],
         "js": ["content.js"]
-    }]
+    }],
+    "icons": {
+        "128": "icon.png"
+    },
+    "web_accessible_resources": [
+        "icon.png"
+    ]
 }

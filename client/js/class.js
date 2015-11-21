@@ -60,49 +60,60 @@ function sendInitPacket() {
             TEXTBOOK.init();
             MENU.init();
             CAPTURE.init();
+
+            chromeExtensionInstallDetect(chromeExtensionHandler, "ajhifddimkapgcifgcodmmfdlknahffk"); // screen.js
+            chromeExtensionInstallDetect(chromeExtensionHandler, "ofmiomhdbekpmpbbeamioeohonddlbkm"); // scrren capture for iframe
         }
         loadWebRTC();
-        chromeExtensionInstallDetect(chromeExtensionHandler);
+
     }).fail(function() {
         alert("error");
     });
 }
 
-function chromeExtensionInstallDetect(callback) {
+function chromeExtensionInstallDetect(callback, extensionid) {
 
-    if (!!navigator.mozGetUserMedia) return callback('not-chrome');
+    if (!!navigator.mozGetUserMedia) return callback({
+        type: 'not-chrome',
+        extensionid: extensionid
+    });
 
-    var extensionid = 'ajhifddimkapgcifgcodmmfdlknahffk';
 
     var image = document.createElement('img');
     image.src = 'chrome-extension://' + extensionid + '/icon.png';
     image.onload = function() {
         setTimeout(function() {
             if (!DetectRTC.screen.notInstalled) {
-                callback('installed-enabled');
+                callback({
+                    type: 'installed-enabled',
+                    extensionid: extensionid
+                });
             }
         }, 2000);
     };
     image.onerror = function() {
         DetectRTC.screen.notInstalled = true;
-        callback('not-installed');
+        callback({
+            type: 'not-installed',
+            extensionid: extensionid
+        });
     };
-
 }
+
 
 function chromeExtensionHandler(param) {
-    if (param === 'not-chrome') {
+    if (param.type === 'not-chrome') {
         alert("Oups!\nSorry, We Only Support the Chrome Browser.");
-    } else if (param === 'not-installed') {
-        alert("Chrome Extension Dosen't Installed. Please Install.");
-        /*
-        <button onclick="!!navigator.webkitGetUserMedia &amp;&amp; !!window.chrome &amp;&amp; !!chrome.webstore &amp;&amp; !!chrome.webstore.install &amp;&amp; chrome.webstore.install('https://chrome.google.com/webstore/detail/ajhifddimkapgcifgcodmmfdlknahffk', function() {location.reload();})" id="install-button" style="font-size:inherit; padding-bottom:0;">Click to Install</button>
-        */
-    } else if (param === 'installed-enabled') {
+    } else if (param.type === 'not-installed') {
+        if (window.confirm("Chrome Extension Dosen't Installed.Please Install.")) {
+            window.location.href = "https://chrome.google.com/webstore/detail/currenttabcaptureextensio/" + param.extensionid;
+
+        }
+    } else if (param.type === 'installed-enabled') {
         // cool.
+
     }
 }
-
 
 function loadWebRTC() {
     DetectRTC.load(function() {
