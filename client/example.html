@@ -18,6 +18,23 @@
         </ul>
         <button style="width: 80px; height: 35px; background-color: #d2e4a1; border-radius: 8px;">Prev</button>
         <button style="width: 80px; height: 35px; background-color: #d2e4a1; border-radius: 8px;">Next</button>
+        <script>
+        var go = function() {
+            var event = new CustomEvent("toExtensionContentFromWebPage", {
+                detail: {
+                    from: "example",
+                    data: "imExmaple!"
+                }
+            });
+            document.dispatchEvent(event);
+            document.addEventListener("toWebPageFromExtensionContent", function(e) {
+                console.log(e.detail.data);
+                document.getElementById("imimg").src = e.detail.data;
+            });
+
+        }
+        </script>
+        <a href="javascript:go();">Click me</a>
     </main>
 </body>
 

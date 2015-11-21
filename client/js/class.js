@@ -52,17 +52,17 @@ function sendInitPacket() {
         chattingServerURL = data.chattingServerURL;
         userName = data.userName;
 
-        
+
         loadChatting();
     }).done(function() {
         if (isTeacher) {
             TAB.init();
             TEXTBOOK.init();
             MENU.init();
-
-            loadWebRTC();
-            chromeExtensionInstallDetect(chromeExtensionHandler);
+            CAPTURE.init();
         }
+        loadWebRTC();
+        chromeExtensionInstallDetect(chromeExtensionHandler);
     }).fail(function() {
         alert("error");
     });
@@ -160,8 +160,8 @@ function loadWebRTC() {
             media: {
                 audio: true,
                 video: true
-                    //audio: DetectRTC.hasMicrophone,
-                    //video: DetectRTC.hasWebcam
+                //audio: DetectRTC.hasMicrophone,
+                //video: DetectRTC.hasWebcam
             },
             peerConnectionConfig: {
                 iceServers: [{
@@ -233,13 +233,14 @@ function loadChatting() {
                 } else if (data.type == 'redo') {
                     lc.redo();
                 } else if (data.type == 'background') {
+                    // **** we need DataURI. **** 
                     if ($("#" + data.tab).hasClass("shareScreen")) {
                         $("#" + TAB.currentTab).get(0).style.backgroundImage = "url(" + data.image + ")";
                         $("#" + TAB.currentTab).get(0).style.backgroundPosition = "center center";
                         $("#" + TAB.currentTab).get(0).style.backgroundRepeat = "no-repeat";
                         $("#" + TAB.currentTab).get(0).style.backgroundSize = "contain";
                     } else {
-                        var image = new Image()
+                        var image = new Image();
                         image.src = data.image;
                         lc.backgroundShapes = [LC.createShape(
                             'Image', {
@@ -427,9 +428,31 @@ function getClouser(element) {
 
 var CAPTURE = {
 
-    screenCapturePeriod: 1000, //ms
+    screenCapturePeriod: 100, //ms
     capturer: {}, // key : element(dom), value : timer
-
+    iframeCaptureRectObject: null, // init by initIframeRectObject()
+    tempCanvas: document.createElement('canvas'),
+    init: function() {
+        // for iframe
+        document.addEventListener("captureResponseEvent", function(e) {
+            console.log(e.detail.data);
+            // resize
+            var img = new Image();
+            img.src = e.detail.data;
+            if (!!!CAPTURE.iframeCaptureRectObject) {
+                console.log("CAPTURE.iframeCaptureRectObject is null!");
+            }
+            var ctx = CAPTURE.tempCanvas.getContext('2d');
+            ctx.drawImage(img, -(CAPTURE.iframeCaptureRectObject.left), -(CAPTURE.iframeCaptureRectObject.top)); //, -(CAPTURE.iframeCaptureRectObject.left), -(CAPTURE.iframeCaptureRectObject.top));
+            document.getElementById("imimg").src = CAPTURE.tempCanvas.toDataURL();
+            var packet = {
+                type: 'background',
+                tab: TAB.currentTab,
+                image: CAPTURE.tempCanvas.toDataURL()
+            };
+            chattingSocket.emit('draw', packet);
+        });
+    },
     run: function(element) {
         if (element) {
             var timer = this.capturer[element];
@@ -452,18 +475,13 @@ var CAPTURE = {
         if (element) {
             if (element.tagName === 'IFRAME') {
 
-                iframe2image(element, function(error, image) {
-                    if (error) {
-                        console.log("iframe2image error : " + error);
-                    } else {
-                        var packet = {
-                            type: 'background',
-                            tab: TAB.currentTab,
-                            image: image.src
-                        };
-                        chattingSocket.emit('draw', packet);
+                var captureRequestEvent = new CustomEvent("captureRequestEvent", {
+                    detail: {
+                        from: "class.js"
                     }
                 });
+                document.dispatchEvent(captureRequestEvent);
+
             } else if (element.tagName === 'VIDEO') {
                 var frame = captureVideoFrame(element);
                 var packet = {
@@ -486,8 +504,26 @@ var CAPTURE = {
                 this.capturer[element] = null;
             }
         }
+    },
+    initIframeCaptureRectObject: function(iframe) {
+        var iframeLayerControlRectObject = iframe.parentNode.parentNode.getElementsByClassName("layerControl")[0].getBoundingClientRect();
+        var iframeContainerRectObject = iframe.parentNode.getBoundingClientRect();
+        CAPTURE.iframeCaptureRectObject = {
+            top: iframeContainerRectObject.top,
+            bottom: iframeLayerControlRectObject.top,
+            height: iframeLayerControlRectObject.top - iframeContainerRectObject.top,
+            left: iframeContainerRectObject.left,
+            right: iframeContainerRectObject.right,
+            width: iframeContainerRectObject.width
+        };
+
+        console.log(CAPTURE.iframeCaptureRectObject);
+        CAPTURE.tempCanvas.width = CAPTURE.iframeCaptureRectObject.width;
+        CAPTURE.tempCanvas.height = CAPTURE.iframeCaptureRectObject.height;
+
     }
 }
+
 
 
 var LCANVAS = {
@@ -608,7 +644,7 @@ var LCANVAS = {
             var reader = new FileReader();
             reader.onload = function(e) {
 
-                var backgroundImage = new Image()
+                var backgroundImage = new Image();
                 backgroundImage.src = e.target.result;
 
                 var packet = {
@@ -760,6 +796,9 @@ var TAB = {
                 captureElement = $("#" + TAB.currentTab).find("video").get(0);
             } else if (tabTemplate === "textbook") {
                 captureElement = $("#" + TAB.currentTab).find("iframe").get(0);
+                if (!!!CAPTURE.iframeCaptureRectObject) {
+                    CAPTURE.initIframeCaptureRectObject(captureElement);
+                }
             }
             CAPTURE.run(captureElement);
         }
