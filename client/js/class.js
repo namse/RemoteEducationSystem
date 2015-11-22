@@ -15,7 +15,10 @@ var isCameraPause = false;
 var prevCanvasTool; // need this per canvas of tab.
 
 var backgroundFileUploadElement;
-
+var currentMousePointer = {
+    x: 0,
+    y: 0
+};
 
 // chatting system
 // from https://github.com/socketio/socket.io/blob/master/examples/chat/public/main.js
@@ -77,7 +80,6 @@ function chromeExtensionInstallDetect(callback, extensionid) {
         type: 'not-chrome',
         extensionid: extensionid
     });
-
 
     var image = document.createElement('img');
     image.src = 'chrome-extension://' + extensionid + '/icon.png';
@@ -447,14 +449,24 @@ var CAPTURE = {
         // for iframe
         document.addEventListener("captureResponseEvent", function(e) {
             console.log(e.detail.data);
-            // resize
+
+            // dataurl -> img
             var img = new Image();
             img.src = e.detail.data;
             if (!!!CAPTURE.iframeCaptureRectObject) {
                 console.log("CAPTURE.iframeCaptureRectObject is null!");
             }
+
+            //img to ctx
             var ctx = CAPTURE.tempCanvas.getContext('2d');
             ctx.drawImage(img, -(CAPTURE.iframeCaptureRectObject.left), -(CAPTURE.iframeCaptureRectObject.top)); //, -(CAPTURE.iframeCaptureRectObject.left), -(CAPTURE.iframeCaptureRectObject.top));
+            // mouse pointer draw
+            ctx.beginPath();
+            ctx.arc(currentMousePointer.x - CAPTURE.iframeCaptureRectObject.left,
+                currentMousePointer.y - CAPTURE.iframeCaptureRectObject.top,
+                5, 0, 2 * Math.PI);
+            ctx.stroke();
+
             document.getElementById("imimg").src = CAPTURE.tempCanvas.toDataURL();
             var packet = {
                 type: 'background',
@@ -906,4 +918,10 @@ $(window).on("load", function() {
 
 $(document).on("ready", function() {
     initButtons();
+    document.addEventListener('mousemove', function(e) {
+        currentMousePointer = {
+            x: e.clientX,
+            y: e.clientY
+        }
+    });
 });
