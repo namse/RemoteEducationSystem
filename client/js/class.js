@@ -428,55 +428,55 @@ function cleanInput(input) {
 }
 
 function initButtons() {
-	$("#teacherVideo").on("click", ".muteBtn", function(event) {
-		// TODO: teacher webRTC mute() or unmute();
-		teacherMute = !teacherMute;
-		if (teacherMute) {
-			//선생님.mute();
-			$(event.target).css("background-image", "url('../image/sound_off.png')");
-		} else {
-			//선생님.unmute();
-			$(event.target).css("background-image", "url('../image/sound_on.png')");
-		}
-	});
-	
-	$("#studentVideo").on("click", ".muteBtn", function(event) {
-		// TODO: student webRTC mute() or unmute();
-		studentMute = !studentMute;
-		if (studentMute) {
-			//학생.mute();
-			$(event.target).css("background-image", "url('../image/sound_off.png')");
-		} else {
-			//학생.unmute();
-			$(event.target).css("background-image", "url('../image/sound_on.png')");
-		}
-	});
-	
-	$("#teacherVideo").on("click", ".cameraPauseBtn", function(event) {
-		// TODO: teacher webRTC pauseVideo() or resumeVideo()
-		teacherCameraPause = !teacherCameraPause;
-		if (teacherCameraPause) {
-			//선생님.pauseVideo();
-			$(event.target).css("background-image", "url('../image/video_off.png')");
-		} else {
-			//선생님.resumeVideo();
-			$(event.target).css("background-image", "url('../image/video_on.png')");
-		}
-	});
-	
-	$("#studentVideo").on("click", ".cameraPauseBtn", function(event) {
-		// TODO: student webRTC pauseVideo() or resumeVideo()
-		studentCameraPause = !studentCameraPause;
-		if (studentCameraPause) {
-			//학생.pauseVideo();
-			$(event.target).css("background-image", "url('../image/video_off.png')");
-		} else {
-			//학생.resumeVideo();
-			$(event.target).css("background-image", "url('../image/video_on.png')");
-		}
-	});
-	
-	
+    $("#teacherVideo").on("click", ".muteBtn", function(event) {
+        // TODO: teacher webRTC mute() or unmute();
+        teacherMute = !teacherMute;
+        if (teacherMute) {
+            //선생님.mute();
+            $(event.target).css("background-image", "url('../image/sound_off.png')");
+        } else {
+            //선생님.unmute();
+            $(event.target).css("background-image", "url('../image/sound_on.png')");
+        }
+    });
+
+    $("#studentVideo").on("click", ".muteBtn", function(event) {
+        // TODO: student webRTC mute() or unmute();
+        studentMute = !studentMute;
+        if (studentMute) {
+            //학생.mute();
+            $(event.target).css("background-image", "url('../image/sound_off.png')");
+        } else {
+            //학생.unmute();
+            $(event.target).css("background-image", "url('../image/sound_on.png')");
+        }
+    });
+
+    $("#teacherVideo").on("click", ".cameraPauseBtn", function(event) {
+        // TODO: teacher webRTC pauseVideo() or resumeVideo()
+        teacherCameraPause = !teacherCameraPause;
+        if (teacherCameraPause) {
+            //선생님.pauseVideo();
+            $(event.target).css("background-image", "url('../image/video_off.png')");
+        } else {
+            //선생님.resumeVideo();
+            $(event.target).css("background-image", "url('../image/video_on.png')");
+        }
+    });
+
+    $("#studentVideo").on("click", ".cameraPauseBtn", function(event) {
+        // TODO: student webRTC pauseVideo() or resumeVideo()
+        studentCameraPause = !studentCameraPause;
+        if (studentCameraPause) {
+            //학생.pauseVideo();
+            $(event.target).css("background-image", "url('../image/video_off.png')");
+        } else {
+            //학생.resumeVideo();
+            $(event.target).css("background-image", "url('../image/video_on.png')");
+        }
+    });
+
+
     $(".head").click(function() {
         if ($(this).hasClass("chatHead") && $(this).hasClass("headDeselected")) {
             $(this).removeClass("headDeselected");
@@ -540,6 +540,9 @@ function initButtons() {
     }
 
     $("#personalStorageFileList").selectable({
+        selected: function(event, ui) {
+            $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");
+        },
         stop: function() {
             $(".ui-selected", this).each(function() {
                 selectedFileName = $(this).find('span').text();
@@ -1006,8 +1009,8 @@ var TAB = {
             }
             CAPTURE.run(captureElement);
         } else {
-			$(".layerControl").remove();
-		}
+            $(".layerControl").remove();
+        }
 
 
         LCANVAS.init($("#lcanvas" + this.tabNum));
