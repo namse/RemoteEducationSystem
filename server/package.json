@@ -6,6 +6,7 @@
   "author": "Nam SeHyun skatpgusskat@naver.com",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.14.1",
     "cookie-parser": "^1.4.0",
     "cookie-session": "^2.0.0-alpha.1",
     "ejs": "^2.3.4",

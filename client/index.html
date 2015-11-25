@@ -1,32 +1,171 @@
+<!doctype html>
 <html>
 
 <head>
-	<title>Remote Education System</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
-	<link rel="stylesheet" href="/css/style.css">
-	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>1:1영상상담서비스</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        vertical-align: middle;
+        box-sizing: border-box;
+        -o-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+    }
+    
+    html {
+        background-color: #1b321b
+    }
+    
+    html,
+    body {
+        width: 100%;
+        margin: 0 auto;
+        background: url(image/login_footerbg.png) 0 604px no-repeat;
+        background-color: #1b321b;
+        font-family: 나눔고딕, "Nanum Gothic", NanumGothic, "Apple SD Gothic Neo", 맑은고딕, "Malgun Gothic", AppleGothic, 돋움, Dotum, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        fond-size: 100%;
+        line-height: 1;
+    }
+    
+    input[type=button],
+    input[type=submit] {
+        cursor: pointer
+    }
+    
+    input,
+    textarea {
+        font-family: 'NanumGothic', '나눔고딕', 'NanumGothicWeb', '맑은 고딕', 'Malgun Gothic', '돋움', '굴림', Dotum, Gulim, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    
+    .wrap {
+        width: 100%;
+        min-width: ;
+        height: 768px;
+        min-height: 768px;
+        max-height: 100%;
+        margin: 0 auto;
+        overflow: hidden
+    }
+    
+    .toparea {
+        width: 100%;
+        height: 620px;
+        background: #efefef;
+        -moz-box-shadow: 0px 1px 20px rgba(0, 0, 0, .7);
+        -webkit-box-shadow: 0px 1px 20px rgba(0, 0, 0, .7);
+        box-shadow: 0 1px 20px rgba(0, 0, 0, .7);
+    }
+    
+    .main {
+        width: 1280px;
+        height: 604px;
+        margin: 0 auto;
+        background: url(image/login_bgmain.png) no-repeat
+    }
+    
+    .logo {
+        float: left;
+        width: 197px;
+        height: 38px;
+        background: url(image/login_logo.png) no-repeat;
+        margin: 16px 0 69px 22px;
+    }
+    
+    .title {
+        width: 731px;
+        height: 117px;
+        background: url(image/login_title.png) no-repeat;
+        clear: both;
+        margin: 0 auto;
+    }
+    
+    .mainimg {
+        width: 654px;
+        height: 330px;
+        background: url(image/loginimg.png) no-repeat;
+        margin: 18px auto;
+    }
+    
+    .footarea {
+        margin: 0 auto;
+        width: 100%;
+        position: relative
+    }
+    
+    .loginarea {
+        width: 1280px;
+        height: auto;
+        margin: 0 auto;
+    }
+    
+    .loginbox {
+        width: 220px;
+        height: 300px;
+        background: rgba(0, 0, 0, 0.0);
+        padding-left: 26px;
+        position: absolute;
+        left: 0;
+        top: 0
+    }
+    
+    input.id_login {
+        float: left;
+        width: 167px;
+        height: 26px;
+        margin-bottom: 4px;
+        padding-left: 6px;
+    }
+    
+    input.pw_login {
+        float: left;
+        width: 167px;
+        height: 26px;
+        margin-bottom: 6px;
+        padding-left: 6px;
+    }
+    
+    input.btn_login {
+        float: left;
+        width: 167px;
+        height: 26px;
+        padding-left: 6px;
+        background: url(image/login_btn_txt.png) center no-repeat;
+        background-color: #3466d7;
+    }
+    </style>
+    <script src="/js/jquery-2.1.4.min.js"></script>
+    <script src="/js/index.js"></script>
 </head>
 
-<body>
-	<header>
-		<div>
-			<img id="logo" src="/image/logo.png">
-			<img id="wave" src="/image/hd_wave.png">
-		</div>
-	</header>
-	<main id="indexPage">
-		<div>
-			<span>Your Name</span><input type="text" id="userName" name="userName"><br>
-			<input type="radio" class="isTeacher" name="isTeacher" value="1" checked><span>Teacher</span>
-			<input type="radio" class="isTeacher" name="isTeacher" value="0"><span>Student</span><br>
-			<span>Room Name</span><input type="text" id="roomID" name="roomID"><br>
-			<button type="button" id="classBtn">START</button>
-		</div>
-	</main>
-	<footer>
-		<span>Copyright Nexcos Co., Ltd. All rights reserved</span>
-	</footer>
-	<script src="/js/index.js"></script>
+<body style="">
+    <div class="wrap">
+        <div class="toparea">
+            <div class="main">
+                <p class="logo"></p>
+                <div class="title"></div>
+                <div class="mainimg"></div>
+            </div>
+        </div>
+        <!--footer-->
+        <div class="footarea">
+            <div class="loginarea">
+                <div class="loginbox" style="">
+                    <img src="image/logintxt.png" style="margin:16px 0 12px 0;">
+                    <input class="id_login" type="text" placeholder="ID">
+                    <input class="pw_login" type="password" placeholder="Password">
+                    <input id="btn_login" class="btn_login" type="button">
+                </div>
+            </div>
+        </div>
+        <!--//footer-->
+    </div>
 </body>
+
 </html>

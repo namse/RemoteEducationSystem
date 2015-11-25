@@ -30,6 +30,12 @@ app.set('views', __dirname + '/../client/');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({
+    extended: true
+})); // support encoded bodies
+
 // Use express-session middleware for express
 app.use(session);
 
