@@ -65,6 +65,7 @@ var sockets = {};
 io.on('connection', function(socket) {
     var roomID = socket.handshake.session.roomID;
     var isTeacher = socket.handshake.session.isTeacher;
+    var userName = socket.handshake.session.userName;
 
     console.log("socket " + socket.id + " connected");
     if (!!!sockets[roomID]) {
@@ -152,7 +153,9 @@ io.on('connection', function(socket) {
                 if (data.destination === 'class') {
                     filePath = path.join('uploadFile', data.destination, roomID);
                 } else if (data.destination === 'personal') {
-                    filePath = path.join('uploadFile', data.destination, socket.handshake.session.userName);
+                    console.log(data.destination);
+                    console.log(userName);
+                    filePath = path.join('uploadFile', data.destination, userName);
                 }
                 mkdirSync(filePath);
 

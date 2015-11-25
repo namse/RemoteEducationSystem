@@ -9,7 +9,8 @@ module.exports = function(app) {
         req.session.isTeacher = ((req.query.isTeacher) === '1');
         req.session.roomID = req.query.roomID;
         req.session.userName = req.query.userName;
-        console.log(req.session.isTeacher);
+        console.log("route.js user name : " + req.query.userName);
+        console.log("FULL : " + req.protocol + '://' + req.get('host') + req.originalUrl);
         res.render('../client/class.html');
     });
 
