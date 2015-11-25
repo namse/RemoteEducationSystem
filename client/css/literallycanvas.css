@@ -75,9 +75,10 @@
 
 .literally .lc-picker {
     top: 0;
-    right: -73px;
+	border: 1px solid #aaa;
+    right: -72px;
     bottom: 0;
-    width: 60px;
+    width: 62px;
     background-color: transparent;
 }
 
@@ -111,6 +112,7 @@
 
 .literally .lc-picker {
     z-index: 2;
+	    border-radius: 3px;
 }
 
 .literally .lc-picker .toolbar-button {
@@ -322,8 +324,8 @@
 
 .literally .lc-options {
     z-index: 3;
-    right: -73px;
-	top: 250px;
+    right: -71px;
+	top: 230px;
 	width: 60px;
 }
 

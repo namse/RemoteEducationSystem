@@ -104,14 +104,14 @@ header {
     position: fixed;
     width: 100%;
     height: 33px;
-    background: linear-gradient(#DADADA, #AAAAAA);
-    box-shadow: 0px 1px 2px #b2b2b2;
+    background: linear-gradient(#fff, #B9D5F7, #9CC4EC);
+    box-shadow: 0px 2px 2px #222;
     z-index: 999;
 }
 
 header #logo {
     position: relative;
-    top: -5px;
+    top: -4px;
     left: 20px;
     height: 25px;
     z-index: 10;
@@ -128,7 +128,6 @@ header #clock {
     position: absolute;
     top: 7px;
     right: 12px;
-    background-color: #147B4B;
     width: 100px;
     height: 20px;
     box-shadow: 0px 2px 2px #555 inset;
@@ -145,7 +144,8 @@ nav {
     top: 33px;
     width: 100%;
     height: 33px;
-    background-color: #5B301B;
+    background: linear-gradient(#5C738F, #1F3248);
+	box-shadow: 0px -1px 3px #111 inset;
     line-height: 40px;
     z-index: 900;
 }
@@ -163,25 +163,6 @@ nav span {
     color: white;
     font-size: 12px;
 }
-
-nav button {
-    float: left;
-    width: 38px;
-    height: 100%;
-    text-align: center;
-    color: white;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-nav #muteBtn {
-    background-image: url("../image/sound_on.png");
-}
-
-nav #cameraPauseBtn {
-    background-image: url("../image/video_on.png");
-}
-
 nav #changeLayer {
     background-image: url("../image/layer_on.png");
 }
@@ -204,13 +185,12 @@ nav > div {
 
 nav #client {
     width: 225px;
-    border-right: 1px solid #111;
     height: 100%;
 }
 
 nav #client #myInfo {
     float: left;
-    padding-left: 20px;
+    padding-left: 15px;
     height: 100%;
 }
 
@@ -328,14 +308,29 @@ main > section {
     height: 25px;
     z-index: 100;
 }
+.videoInfo button {
+    float: right;
+    width: 30px;
+    height: 100%;
+    text-align: center;
+    color: white;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.muteBtn {
+    background-image: url("../image/sound_on.png");
+}
 
+.cameraPauseBtn {
+    background-image: url("../image/video_on.png");
+}
 #communicationArea .videoInfoShadow {
     position: absolute;
     bottom: 0px;
     width: 100%;
     height: 25px;
     background-color: #000;
-    opacity: 0.8;
+    opacity: 0.5;
     z-index: 50;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
@@ -435,7 +430,7 @@ main > section {
 #communicationArea .chatArea .chatInput button {
     width: 48px;
     height: 25px;
-    background-color: #B75A31;
+    background-color: #1F3248;
     color: white;
     font-size: 10px;
     font-weight: 600;
@@ -582,7 +577,7 @@ dialog button {
     line-height: 22px;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    background-color: #fff;
+    background-color: #F7EA5F;
     border: 1px solid #b8b8b8;
     border-bottom: none;
     color: #555;
@@ -620,7 +615,7 @@ dialog button {
     margin: 5px 10px;
     width: 80%;
     height: 25px;
-    background-color: #B75A31;
+    background-color: #1F3248;
     font-size: 12px;
     color: white;
 }
@@ -630,7 +625,7 @@ dialog button {
     top: -1px;
     width: 100%;
     height: 598px;
-    background-color: #fff;
+    background-color: #F7EA5F;
     border: 1px solid #b8b8b8;
     padding: 5px;
     box-sizing: border-box;

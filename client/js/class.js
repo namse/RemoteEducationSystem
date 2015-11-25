@@ -12,6 +12,11 @@ var chattingSocket;
 var isMuted = false;
 var isCameraPause = false;
 
+var teacherMute = false;
+var studentMute = false;
+var teacherCameraPause = false;
+var studentCameraPause = false;
+
 var prevCanvasTool; // need this per canvas of tab.
 
 var backgroundFileUploadElement;
@@ -29,9 +34,8 @@ var currentMousePointer = {
 // from https://github.com/socketio/socket.io/blob/master/examples/chat/public/main.js
 
 var COLORS = [
-    '#e21400', '#91580f', '#f8a700', '#f78b00',
-    '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
-    '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
+    '#90CAF9', '#FFCDD2', '#E1BEE7', '#B2EBF2',
+    '#FFE082', '#FFCCBC', '#E6EE9C', '#C5E1A5'
 ];
 var $window = $(window);
 var $messages = $('.messages'); // Messages area
@@ -325,7 +329,6 @@ $inputMessage.keydown(function(event) {
             typing = false;
         }
     }
-    console.log($inputMessage.val());
 });
 $("#chatSend").click(function() {
     sendMessage();
@@ -425,28 +428,55 @@ function cleanInput(input) {
 }
 
 function initButtons() {
-    $("#muteBtn").click(function() {
-        isMuted = !isMuted;
-        if (isMuted) {
-            webRTC.mute();
-            $("#muteBtn").css("background-image", "url('../image/sound_off.png')");
-        } else {
-            webRTC.unmute();
-            $("#muteBtn").css("background-image", "url('../image/sound_on.png')");
-        }
-    });
-
-    $("#cameraPauseBtn").click(function() {
-        isCameraPause = !isCameraPause;
-        if (isCameraPause) {
-            webRTC.pauseVideo();
-            $("#cameraPauseBtn").css("background-image", "url('../image/video_off.png')");
-        } else {
-            webRTC.resumeVideo();
-            $("#cameraPauseBtn").css("background-image", "url('../image/video_on.png')");
-        }
-    });
-
+	$("#teacherVideo").on("click", ".muteBtn", function(event) {
+		// TODO: teacher webRTC mute() or unmute();
+		teacherMute = !teacherMute;
+		if (teacherMute) {
+			//선생님.mute();
+			$(event.target).css("background-image", "url('../image/sound_off.png')");
+		} else {
+			//선생님.unmute();
+			$(event.target).css("background-image", "url('../image/sound_on.png')");
+		}
+	});
+	
+	$("#studentVideo").on("click", ".muteBtn", function(event) {
+		// TODO: student webRTC mute() or unmute();
+		studentMute = !studentMute;
+		if (studentMute) {
+			//학생.mute();
+			$(event.target).css("background-image", "url('../image/sound_off.png')");
+		} else {
+			//학생.unmute();
+			$(event.target).css("background-image", "url('../image/sound_on.png')");
+		}
+	});
+	
+	$("#teacherVideo").on("click", ".cameraPauseBtn", function(event) {
+		// TODO: teacher webRTC pauseVideo() or resumeVideo()
+		teacherCameraPause = !teacherCameraPause;
+		if (teacherCameraPause) {
+			//선생님.pauseVideo();
+			$(event.target).css("background-image", "url('../image/video_off.png')");
+		} else {
+			//선생님.resumeVideo();
+			$(event.target).css("background-image", "url('../image/video_on.png')");
+		}
+	});
+	
+	$("#studentVideo").on("click", ".cameraPauseBtn", function(event) {
+		// TODO: student webRTC pauseVideo() or resumeVideo()
+		studentCameraPause = !studentCameraPause;
+		if (studentCameraPause) {
+			//학생.pauseVideo();
+			$(event.target).css("background-image", "url('../image/video_off.png')");
+		} else {
+			//학생.resumeVideo();
+			$(event.target).css("background-image", "url('../image/video_on.png')");
+		}
+	});
+	
+	
     $(".head").click(function() {
         if ($(this).hasClass("chatHead") && $(this).hasClass("headDeselected")) {
             $(this).removeClass("headDeselected");
@@ -559,17 +589,9 @@ function documentFileUpload(file, destination) {
 }
 
 var MENU = {
-    isMuted: false,
-    isCameraPause: false,
     isCanvas: true,
     init: function() {
         $("#changeLayer").on("click", this.layerControl.bind(this));
-    },
-    soundControl: function() {
-
-    },
-    cameraControl: function() {
-
     },
     layerControl: function(event) {
         var canvas = $("#" + TAB.currentTab).find(".literally");
@@ -645,7 +667,6 @@ var CAPTURE = {
     },
 
     onTick: function(element) {
-        console.log(element);
         if (element) {
             if (element.tagName === 'IFRAME') {
 
@@ -797,7 +818,7 @@ var LCANVAS = {
             return {
                 usesSimpleAPI: false, // DO NOT FORGET THIS!!!
                 name: 'Background',
-                iconName: 'line',
+                iconName: 'bg',
                 optionsStyle: null,
 
                 didBecomeActive: function(lc) {
@@ -914,7 +935,7 @@ var TAB = {
 
         var deleteCount = this.tabNum - this.tabCount + 1;
         $("#tabBtn" + tabNumber).css({
-            "background-color": "#fff",
+            "background-color": "#F7EA5F",
             "border-bottom": "none"
         });
         this.currentTab = "tab" + tabNumber;
@@ -975,7 +996,9 @@ var TAB = {
                 }
             }
             CAPTURE.run(captureElement);
-        }
+        } else {
+			$(".layerControl").remove();
+		}
 
 
         LCANVAS.init($("#lcanvas" + this.tabNum));
