@@ -25,6 +25,27 @@ var IMG_QUALITY = 80; // [0-100]
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.from === "content.js") {
         if (message.data === "captureRequest") {
+            chrome.tabCapture.capture({
+                audio: true,
+                video: true
+            }, function(stream) {
+                chrome.tabs.query({
+                        currentWindow: true,
+                        active: true
+                    },
+                    function(tabArray) {
+                        console.log(stream);
+                        var outMessage = {
+                            from: "background.js",
+                            data: stream
+                        };
+
+                        console.log(tabArray);
+                        chrome.tabs.sendMessage(tabArray[0].id, outMessage);
+                    });
+            });
+
+            /*
             var opts = {
                 format: IMG_MIMETYPE,
                 quality: IMG_QUALITY
@@ -44,7 +65,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                         chrome.tabs.sendMessage(tabArray[0].id, outMessage);
                     }
                 );
-            });
+            });*/
         }
     }
 });

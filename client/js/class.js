@@ -15,6 +15,9 @@ var isCameraPause = false;
 var prevCanvasTool; // need this per canvas of tab.
 
 var backgroundFileUploadElement;
+var documentFileUploadElement;
+var documentFile;
+var dialog
 var currentMousePointer = {
     x: 0,
     y: 0
@@ -405,6 +408,65 @@ function initButtons() {
             $("#cameraPauseBtn").css("background-image", "url('../image/video_on.png')");
         }
     });
+
+    $(".head").click(function() {
+        if ($(this).hasClass("chatHead") && $(this).hasClass("headDeselected")) {
+            $(this).removeClass("headDeselected");
+            $(this).addClass("headSelected");
+            $(".documentHead").removeClass("headSelected");
+            $(".documentHead").addClass("headDeselected");
+
+            $(".chatArea").show();
+            $(".documentArea").hide();
+        } else if ($(this).hasClass("documentHead") && $(this).hasClass("headDeselected")) {
+            $(this).removeClass("headDeselected");
+            $(this).addClass("headSelected");
+            $(".chatHead").removeClass("headSelected");
+            $(".chatHead").addClass("headDeselected");
+
+            $(".chatArea").hide();
+            $(".documentArea").show();
+        }
+    });
+
+    $("#uploadBtn").click(function() {
+        documentFileUploadElement.click();
+    });
+    document.querySelector('#personalStorageUploadBtn').onclick = function() {
+        console.log(documentFile);
+        documentFileUpload(documentFile, "personal");
+        dialog.close();
+    };
+
+    document.querySelector('#classStorageUploadBtn').onclick = function() {
+        console.log(documentFile);
+        documentFileUpload(documentFile, "class");
+        dialog.close();
+    };
+
+    document.querySelector('#storageUploadCancelBtn').onclick = function() {
+        dialog.close();
+    };
+
+}
+
+function onDocumentFileUploadReady() {
+    documentFile = this.files[0];
+    document.querySelector('#uploadFileName').innerHTML = documentFile.name;
+    dialog.showModal();
+}
+
+function documentFileUpload(file, destination) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var packet = {
+            type: 'upload',
+            destination: destination,
+            file: e.target.result
+        };
+        chattingSocket.emit('file', packet);
+    }
+    reader.readAsDataURL(file);
 }
 
 var MENU = {
@@ -464,7 +526,7 @@ var CAPTURE = {
             ctx.beginPath();
             ctx.arc(currentMousePointer.x - CAPTURE.iframeCaptureRectObject.left,
                 currentMousePointer.y - CAPTURE.iframeCaptureRectObject.top,
-                5, 0, 2 * Math.PI);
+                3, 0, 2 * Math.PI);
             ctx.stroke();
 
             document.getElementById("imimg").src = CAPTURE.tempCanvas.toDataURL();
@@ -914,6 +976,12 @@ $(window).on("load", function() {
     backgroundFileUploadElement = document.createElement("INPUT");
     backgroundFileUploadElement.setAttribute("type", "file");
     backgroundFileUploadElement.addEventListener("change", LCANVAS.handleBackgroundFiles, false);
+
+    documentFileUploadElement = document.createElement("INPUT");
+    documentFileUploadElement.setAttribute("type", "file");
+    documentFileUploadElement.addEventListener("change", onDocumentFileUploadReady, false);
+
+    dialog = document.querySelector('dialog');
 });
 
 $(document).on("ready", function() {

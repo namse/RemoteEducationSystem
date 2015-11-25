@@ -6,6 +6,7 @@ var url = require('url');
 var socketio = require('socket.io');
 var fs = require('fs');
 var signal = require('./signal/server');
+var path = require('path');
 var credentials = {
     key: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.private.pem'),
     cert: fs.readFileSync('./ssl/6de8b18d-643f-4bf9-97b9-c1686765013c.public.pem'),
@@ -143,6 +144,36 @@ io.on('connection', function(socket) {
             console.log("[" + socket.id + "]ERROR DRAW : you are not teacher!");
         }
     });
+
+    socket.on('file', function(data) {
+        if (data.type === "upload") {
+            if (data.destination === 'class' || data.destination === 'personal') {
+                var filePath;
+                if (data.destination === 'class') {
+                    filePath = path.join('uploadFile', data.destination, roomID);
+                } else if (data.destination === 'personal') {
+                    filePath = path.join('uploadFile', data.destination, socket.handshake.session.userName);
+                }
+                mkdirSync(filePath);
+
+                fs.writeFile(filePath, data.file, function(error) {
+                    if (error) {
+                        console.log("ERROR FILE : file write error!");
+                    }
+                });
+            } else {
+                console.log("ERROR FILE : wrong destination - " + data);
+            }
+        }
+    });
 });
 
 signal(credentials);
+
+var mkdirSync = function(path) {
+    try {
+        fs.mkdirSync(path);
+    } catch (e) {
+        if (e.code != 'EEXIST') throw e;
+    }
+}

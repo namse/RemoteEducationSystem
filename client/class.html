@@ -29,9 +29,9 @@
             <img id="wave" src="/image/hd_wave.png">
         </div>
         <!--<div id="clock">
-			<img src="" alt="O">
-			<span>00:00</span>
-		</div>-->
+            <img src="" alt="O">
+            <span>00:00</span>
+        </div>-->
     </header>
     <nav>
         <div id="client">
@@ -66,13 +66,53 @@
                 <div class="videoInfoShadow"></div>
             </div>
             <div class="chat page">
-                <div class="chatHead">채팅</div>
+                <div class="headContainer">
+                    <div class="head chatHead headSelected">채팅</div>
+                    <div class="head documentHead headDeselected">문서</div>
+                </div>
                 <div class="chatArea">
                     <ul class="messages"></ul>
+                    <div class="chatInput">
+                        <input class="inputMessage" placeholder="Type here..." />
+                        <button type="button" id="chatSend">SEND</button>
+                    </div>
                 </div>
-                <div class="chatInput">
-                    <input class="inputMessage" placeholder="Type here..." />
-                    <button type="button" id="chatSend">SEND</button>
+                <div class="documentArea">
+                    <dialog>
+                        <span>파일명 : </span>
+                        <span id="uploadFileName"></span>
+                        <p>파일을 업로드 할 공간을 선택하십시오.</p>
+                        <button id="personalStorageUploadBtn">개인 저장소</button>
+                        <button id="classStorageUploadBtn">강의실 저장소</button>
+                        <button id="storageUploadCancelBtn">취소</button>
+                    </dialog>
+                    <div class="buttonList">
+                        <button id="uploadBtn"></button>
+                        <button id="refreshBtn"></button>
+                        <button id="downloadBtn"></button>
+                        <button id="deleteBtn"></button>
+                    </div>
+                    <div class="documentContainer">
+                        <section class="storage personal">
+                            <div class="storageHead personal">
+                                개인 저장소</div>
+                            <ul class="storageFiles">
+                                <li>test</li>
+                                <li>test1</li>
+                                <li>testsdfafadfasdfadsffdsafasdfasdf</li>
+                                <li>testsdfafadfasdfadsffdsafasdfasdf</li>
+                                <li>testsdfafadfasdfadsffdsafasdfasdf</li>
+                            </ul>
+                        </section>
+                        <section class="storage class">
+                            <div class="storageHead class">강의실 저장소</div>
+                            <ul class="storageFiles">
+                                <li>test</li>
+                                <li>test1</li>
+                                <li>testsdfafadfasdfadsffdsafasdfasdf</li>
+                            </ul>
+                        </section>
+                    </div>
                 </div>
             </div>
         </section>
