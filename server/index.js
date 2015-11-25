@@ -94,7 +94,7 @@ io.on('connection', function(socket) {
     console.log(socket.handshake.session.userData);
     console.log(socket.id + " is teacher? : " + isTeacher);
 
-    var sendFileList = function() {
+    var sendFileList = function(socket) {
         fs.readdir(path.join(config.uploadDirectory, "class", roomID), function(err, classFiles) {
             fs.readdir(path.join(config.uploadDirectory, "personal", userName), function(err, personalFiles) {
                 var packet = {
@@ -181,7 +181,16 @@ io.on('connection', function(socket) {
                             if (error) {
                                 console.log("ERROR FILE : file write error! - " + error);
                             } else {
-                                sendFileList();
+                                if (data.destination === 'class') {
+                                    sockets[roomID][STUDENTS].map(function(studentSocket) {
+                                        sendFileList(studentSocket);
+                                    });
+                                    if (sockets[roomID][TEACHER]) {
+                                        sendFileList(sockets[roomID][TEACHER]);
+                                    }
+                                } else if (data.destination === 'personal') {
+                                    sendFileList(socket);
+                                }
                             }
                         });
                     }
@@ -190,7 +199,7 @@ io.on('connection', function(socket) {
                 console.log("ERROR FILE : wrong destination - " + data);
             }
         } else if (data.type === 'fileList') {
-            sendFileList();
+            sendFileList(socket);
         } else if (data.type === 'delete') {
             if (data.destination === 'class' || data.destination === 'personal') {
                 var filePath;
@@ -201,7 +210,16 @@ io.on('connection', function(socket) {
                 }
                 fs.unlink(path.join(filePath, data.fileName), function(err) {
                     if (err) throw err;
-                    sendFileList();
+                    if (data.destination === 'class') {
+                        sockets[roomID][STUDENTS].map(function(studentSocket) {
+                            sendFileList(studentSocket);
+                        });
+                        if (sockets[roomID][TEACHER]) {
+                            sendFileList(sockets[roomID][TEACHER]);
+                        }
+                    } else if (data.destination === 'personal') {
+                        sendFileList(socket);
+                    }
                 });
             }
         }
