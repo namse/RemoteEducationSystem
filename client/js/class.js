@@ -652,7 +652,6 @@ var CAPTURE = {
                 3, 0, 2 * Math.PI);
             ctx.stroke();
 
-            document.getElementById("imimg").src = CAPTURE.tempCanvas.toDataURL();
             var packet = {
                 type: 'background',
                 tab: TAB.currentTab,
