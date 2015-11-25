@@ -314,6 +314,31 @@ function loadChatting() {
         });
 
     }
+
+    if (isTeacher) {
+        $("#teacherVideo > div > .videoName").text(userName);
+    } else {
+        $("#studentVideo > div > .videoName").text(userName);
+    }
+
+    chattingSocket.on('name', function(data) {
+        if (isTeacher) {
+            $("#studentVideo > div > .videoName").text(data.name);
+        } else {
+            $("#teacherVideo > div > .videoName").text(data.name);
+        }
+        if (data.request === true) {
+            chattingSocket.emit('name', {
+                name: userName,
+                request: false
+            });
+        }
+    });
+
+    chattingSocket.emit('name', {
+        name: userName,
+        request: true
+    });
 }
 
 
@@ -432,10 +457,22 @@ function initButtons() {
         // TODO: teacher webRTC mute() or unmute();
         teacherMute = !teacherMute;
         if (teacherMute) {
-            //선생님.mute();
+            if (isTeacher) {
+                webRTC.mute();
+            } else {
+                for (var i = 0; i < $("#teacherVideo > video").length; i++) {
+                    $("#teacherVideo > video")[i].muted = true;
+                }
+            }
             $(event.target).css("background-image", "url('../image/sound_off.png')");
         } else {
-            //선생님.unmute();
+            if (isTeacher) {
+                webRTC.unmute();
+            } else {
+                for (var i = 0; i < $("#teacherVideo > video").length; i++) {
+                    $("#teacherVideo > video")[i].muted = false;
+                }
+            }
             $(event.target).css("background-image", "url('../image/sound_on.png')");
         }
     });
@@ -444,10 +481,22 @@ function initButtons() {
         // TODO: student webRTC mute() or unmute();
         studentMute = !studentMute;
         if (studentMute) {
-            //학생.mute();
+            if (!!!isTeacher) {
+                webRTC.mute();
+            } else {
+                for (var i = 0; i < $("#studentVideo > video").length; i++) {
+                    $("#studentVideo > video")[i].muted = true;
+                }
+            }
             $(event.target).css("background-image", "url('../image/sound_off.png')");
         } else {
-            //학생.unmute();
+            if (!!!isTeacher) {
+                webRTC.unmute();
+            } else {
+                for (var i = 0; i < $("#studentVideo > video").length; i++) {
+                    $("#studentVideo > video")[i].muted = false;
+                }
+            }
             $(event.target).css("background-image", "url('../image/sound_on.png')");
         }
     });

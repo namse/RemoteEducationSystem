@@ -115,6 +115,16 @@ io.on('connection', function(socket) {
         });
     }
 
+    socket.on('name', function(packet) {
+        if (isTeacher) {
+            sockets[roomID][STUDENTS].map(function(studentSocket) {
+                studentSocket.emit('name', packet);
+            });
+        } else if (sockets[roomID][TEACHER]) {
+            sockets[roomID][TEACHER].emit('name', packet);
+        }
+    });
+
     socket.on('chat', function(msg) {
         console.log(msg);
         socket.broadcast.to(roomID).emit('chat', msg);
