@@ -481,13 +481,13 @@ main > section {
 
 #communicationArea .documentArea .buttonList #downloadBtn {
     float: right;
-    background-image: url("../image/icon16_07.png");
+    background-image: url("../image/icon16_06.png");
+    margin-right: 2px;
 }
 
 #communicationArea .documentArea .buttonList #deleteBtn {
     float: right;
-    background-image: url("../image/icon16_06.png");
-    margin-right: 2px;
+    background-image: url("../image/icon16_07.png");
 }
 
 #communicationArea .documentArea .storage {
@@ -516,6 +516,15 @@ main > section {
 #communicationArea .documentArea .storageFiles {
     max-height: 67px;
     overflow-y: auto;
+}
+
+#communicationArea .documentArea .ui-selecting {
+    background: #FECA40;
+}
+
+#communicationArea .documentArea .ui-selected {
+    background: #F39814;
+    color: white;
 }
 
 #communicationArea .documentArea .storageFiles li {

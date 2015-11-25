@@ -17,7 +17,9 @@ var prevCanvasTool; // need this per canvas of tab.
 var backgroundFileUploadElement;
 var documentFileUploadElement;
 var documentFile;
-var dialog
+var dialog;
+var selectedFileName;
+var selectedFileDestination;
 var currentMousePointer = {
     x: 0,
     y: 0
@@ -211,6 +213,42 @@ function loadChatting() {
 
     chattingSocket.on('chat', function(msg) {
         addChatMessage(msg);
+    });
+
+    chattingSocket.on('file', function(packet) {
+        if (packet.type === 'fileList') {
+            console.log("refresh");
+            console.log(packet);
+
+
+            var personalStorageFileList = $("#personalStorageFileList");
+            var classStorageFileList = $("#classStorageFileList");
+
+            personalStorageFileList.empty();
+            classStorageFileList.empty();
+
+            if (packet.data.personal && packet.data.personal.length > 0) {
+                for (var i = 0; i < packet.data.personal.length; i++) {
+                    var fileName = packet.data.personal[i];
+                    personalStorageFileList.append(
+                        $('<li>').append(
+                            $('<span>').append(fileName).addClass('ui-widget-content')
+                        )
+                    );
+                }
+            }
+            if (packet.data.class && packet.data.class.length > 0) {
+
+                for (var i = 0; i < packet.data.class.length; i++) {
+                    var fileName = packet.data.class[i];
+                    classStorageFileList.append(
+                        $('<li>').append(
+                            $('<span>').append(fileName).addClass('ui-widget-content')
+                        )
+                    );
+                }
+            }
+        }
     });
 
     if (isTeacher == false) {
@@ -426,6 +464,11 @@ function initButtons() {
 
             $(".chatArea").hide();
             $(".documentArea").show();
+
+            var packet = {
+                type: 'fileList'
+            };
+            chattingSocket.emit('file', packet);
         }
     });
 
@@ -448,6 +491,51 @@ function initButtons() {
         dialog.close();
     };
 
+    $("#refreshBtn").click(function() {
+        var packet = {
+            type: 'fileList'
+        };
+        chattingSocket.emit('file', packet);
+    });
+
+    var SelectSelectableElement = function(selectableContainer, elementsToSelect) {
+        // add unselecting class to all elements in the styleboard canvas except the ones to select
+        $(".ui-selected", selectableContainer).not(elementsToSelect).removeClass("ui-selected").addClass("ui-unselecting");
+
+        // add ui-selecting class to the elements to select
+        $(elementsToSelect).not(".ui-selected").addClass("ui-selecting");
+
+        // trigger the mouse stop event (this will select all .ui-selecting elements, and deselect all .ui-unselecting elements)
+        // selectableContainer.data("selectable")._mouseStop(null);
+    }
+
+    $("#personalStorageFileList").selectable({
+        stop: function() {
+            $(".ui-selected", this).each(function() {
+                selectedFileName = $(this).find('span').text();
+                selectedFileDestination = "personal";
+                SelectSelectableElement($("#classStorageFileList"), null);
+            });
+        }
+    });
+
+
+    $("#classStorageFileList").selectable({
+        stop: function() {
+            $(".ui-selected", this).each(function() {
+                selectedFileName = $(this).find('span').text();
+                selectedFileDestination = "class";
+                SelectSelectableElement($("#personalStorageFileList"), null);
+            });
+        }
+    });
+
+    $("#downloadBtn").click(function() {
+        var link = document.createElement("a");
+        link.download = selectedFileName;
+        link.href = "./file?fileName=" + selectedFileName + "&destination=" + selectedFileDestination;
+        link.click();
+    });
 }
 
 function onDocumentFileUploadReady() {
@@ -462,6 +550,7 @@ function documentFileUpload(file, destination) {
         var packet = {
             type: 'upload',
             destination: destination,
+            fileName: file.name,
             file: e.target.result
         };
         chattingSocket.emit('file', packet);

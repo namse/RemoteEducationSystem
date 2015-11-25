@@ -21,6 +21,7 @@ var session = require("express-session")({
 });
 var sharedsession = require("express-socket.io-session");
 var mkdirp = require('mkdirp');
+var config = require('getconfig');
 
 //app.use("/test", require('express').static(__dirname.replace('server', 'testClient')));
 app.use(express.static(__dirname + '/../client/'));
@@ -35,7 +36,6 @@ app.use(session);
 // const value
 var STUDENTS = 'students';
 var TEACHER = 'teacher';
-var UPLOADFILE = 'uploadFile';
 
 
 
@@ -95,8 +95,8 @@ io.on('connection', function(socket) {
     console.log(socket.id + " is teacher? : " + isTeacher);
 
     var sendFileList = function() {
-        fs.readdir(path.join(UPLOADFILE, "class", roomID), function(err, classFiles) {
-            fs.readdir(path.join(UPLOADFILE, "personal", userName), function(err, personalFiles) {
+        fs.readdir(path.join(config.uploadDirectory, "class", roomID), function(err, classFiles) {
+            fs.readdir(path.join(config.uploadDirectory, "personal", userName), function(err, personalFiles) {
                 var packet = {
                     type: "fileList",
                     data: {
@@ -171,8 +171,6 @@ io.on('connection', function(socket) {
                 if (data.destination === 'class') {
                     filePath = path.join(UPLOADFILE, data.destination, roomID);
                 } else if (data.destination === 'personal') {
-                    console.log(data.destination);
-                    console.log(userName);
                     filePath = path.join(UPLOADFILE, data.destination, userName);
                 }
                 mkdirp(filePath, function(err) {
