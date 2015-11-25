@@ -35,6 +35,7 @@ app.use(session);
 // const value
 var STUDENTS = 'students';
 var TEACHER = 'teacher';
+var UPLOADFILE = 'uploadFile';
 
 
 
@@ -92,6 +93,21 @@ io.on('connection', function(socket) {
 
     console.log(socket.handshake.session.userData);
     console.log(socket.id + " is teacher? : " + isTeacher);
+
+    var sendFileList = function() {
+        fs.readdir(path.join(UPLOADFILE, "class", roomID), function(err, classFiles) {
+            fs.readdir(path.join(UPLOADFILE, "personal", userName), function(err, personalFiles) {
+                var packet = {
+                    type: "fileList",
+                    data: {
+                        personal: personalFiles,
+                        class: classFiles
+                    }
+                };
+                socket.emit('file', packet);
+            });
+        });
+    }
 
     socket.on('chat', function(msg) {
         console.log(msg);
@@ -153,11 +169,11 @@ io.on('connection', function(socket) {
             if (data.destination === 'class' || data.destination === 'personal') {
                 var filePath;
                 if (data.destination === 'class') {
-                    filePath = path.join('uploadFile', data.destination, roomID);
+                    filePath = path.join(UPLOADFILE, data.destination, roomID);
                 } else if (data.destination === 'personal') {
                     console.log(data.destination);
                     console.log(userName);
-                    filePath = path.join('uploadFile', data.destination, userName);
+                    filePath = path.join(UPLOADFILE, data.destination, userName);
                 }
                 mkdirp(filePath, function(err) {
                     if (err) {
@@ -166,15 +182,17 @@ io.on('connection', function(socket) {
                         fs.writeFile(path.join(filePath, data.fileName), data.file, function(error) {
                             if (error) {
                                 console.log("ERROR FILE : file write error! - " + error);
+                            } else {
+                                sendFileList();
                             }
                         });
                     }
                 });
-
-
             } else {
                 console.log("ERROR FILE : wrong destination - " + data);
             }
+        } else if (data.type === 'fileList') {
+            sendFileList();
         }
     });
 });
