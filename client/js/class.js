@@ -542,11 +542,7 @@ function initButtons() {
     $("#personalStorageFileList").selectable({
         selected: function(event, ui) {
             $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");
-        },
-        stop: function() {
             $(".ui-selected", this).each(function() {
-                selectedFileName = $(this).find('span').text();
-                selectedFileDestination = "personal";
                 SelectSelectableElement($("#classStorageFileList"), null);
             });
         }
@@ -554,30 +550,48 @@ function initButtons() {
 
 
     $("#classStorageFileList").selectable({
-        stop: function() {
+        selected: function(event, ui) {
+            $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");
             $(".ui-selected", this).each(function() {
-                selectedFileName = $(this).find('span').text();
-                selectedFileDestination = "class";
                 SelectSelectableElement($("#personalStorageFileList"), null);
             });
         }
     });
 
     $("#downloadBtn").click(function() {
-        var link = document.createElement("a");
-        link.download = selectedFileName;
-        link.href = "./file?fileName=" + selectedFileName + "&destination=" + selectedFileDestination;
-        link.click();
+        if (updateSelectedFile()) {
+            var link = document.createElement("a");
+            link.download = selectedFileName;
+            link.href = "./file?fileName=" + selectedFileName + "&destination=" + selectedFileDestination;
+            link.click();
+        }
     });
 
     $('#deleteBtn').click(function() {
-        var packet = {
-            type: 'delete',
-            fileName: selectedFileName,
-            destination: selectedFileDestination
-        };
-        chattingSocket.emit('file', packet);
+        if (updateSelectedFile()) {
+            var packet = {
+                type: 'delete',
+                fileName: selectedFileName,
+                destination: selectedFileDestination
+            };
+            chattingSocket.emit('file', packet);
+        }
     });
+}
+
+function updateSelectedFile() {
+    if ($("li.ui-selectee.ui-selected").length <= 0)
+        return false;
+
+    selectedFileName = $("li.ui-selectee.ui-selected").find('span').text();
+    if ($("li.ui-selectee.ui-selected").parent().attr('id') === 'personalStorageFileList')
+        selectedFileDestination = "personal";
+    else if ($("li.ui-selectee.ui-selected").parent().attr('id') === 'classStorageFileList')
+        selectedFileDestination = "class"
+    else {
+        return false;
+    }
+    return true;
 }
 
 function onDocumentFileUploadReady() {
