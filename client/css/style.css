@@ -166,6 +166,13 @@ nav span {
 
 nav #changeLayer {
     background-image: url("../image/layer_on.png");
+    float: left;
+    width: 38px;
+    height: 100%;
+    text-align: center;
+    color: white;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 nav #settingBtn {

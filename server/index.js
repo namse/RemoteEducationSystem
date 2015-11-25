@@ -25,6 +25,7 @@ var config = require('getconfig');
 
 //app.use("/test", require('express').static(__dirname.replace('server', 'testClient')));
 app.use(express.static(__dirname + '/../client/'));
+app.use("/iframe", express.static(__dirname + '/' + config.uploadDirectory + '/'));
 app.set('views', __dirname + '/../client/');
 
 app.engine('html', require('ejs').renderFile);

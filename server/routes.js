@@ -61,4 +61,14 @@ module.exports = function(app) {
             success: true
         });
     });
+
+    app.get('/iframeFile', function(req, res) {
+        fs.stat(path.join(config.uploadDirectory, "class", req.session.roomID, req.query.fileName), function(err, stats) {
+            if (!!!err && stats.isFile()) {
+                res.redirect(path.join("iframe", "class", req.session.roomID, req.query.fileName));
+            } else {
+                res.redirect(path.join("iframe", 'personal', req.session.userName, req.query.fileName));
+            }
+        });
+    });
 };

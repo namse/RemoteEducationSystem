@@ -594,6 +594,11 @@ function initButtons() {
             $(".ui-selected", this).each(function() {
                 SelectSelectableElement($("#classStorageFileList"), null);
             });
+            var prevFileName = selectedFileName;
+            updateSelectedFile();
+            if (prevFileName === selectedFileName) {
+                copyToClipboard($("li.ui-selectee.ui-selected").find('span'));
+            }
         }
     });
 
@@ -1151,8 +1156,20 @@ var TEXTBOOK = {
         }
     },
     getTextBook: function(iframe, url) {
-        iframe.attr("src", url);
+        if (url.substring(0, 8) === "https://") {
+            iframe.attr("src", url);
+        } else {
+            iframe.attr("src", "./iframeFile?fileName=" + url);
+        }
     }
+}
+
+function copyToClipboard(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
 }
 
 // Service code
