@@ -536,6 +536,15 @@ function initButtons() {
         link.href = "./file?fileName=" + selectedFileName + "&destination=" + selectedFileDestination;
         link.click();
     });
+
+    $('#deleteBtn').click(function() {
+        var packet = {
+            type: 'delete',
+            fileName: selectedFileName,
+            destination: selectedFileDestination
+        };
+        chattingSocket.emit('file', packet);
+    });
 }
 
 function onDocumentFileUploadReady() {

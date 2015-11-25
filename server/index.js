@@ -169,9 +169,9 @@ io.on('connection', function(socket) {
             if (data.destination === 'class' || data.destination === 'personal') {
                 var filePath;
                 if (data.destination === 'class') {
-                    filePath = path.join(UPLOADFILE, data.destination, roomID);
+                    filePath = path.join(config.uploadDirectory, data.destination, roomID);
                 } else if (data.destination === 'personal') {
-                    filePath = path.join(UPLOADFILE, data.destination, userName);
+                    filePath = path.join(config.uploadDirectory, data.destination, userName);
                 }
                 mkdirp(filePath, function(err) {
                     if (err) {
@@ -191,6 +191,19 @@ io.on('connection', function(socket) {
             }
         } else if (data.type === 'fileList') {
             sendFileList();
+        } else if (data.type === 'delete') {
+            if (data.destination === 'class' || data.destination === 'personal') {
+                var filePath;
+                if (data.destination === 'class') {
+                    filePath = path.join(config.uploadDirectory, data.destination, roomID);
+                } else if (data.destination === 'personal') {
+                    filePath = path.join(config.uploadDirectory, data.destination, userName);
+                }
+                fs.unlink(path.join(filePath, data.fileName), function(err) {
+                    if (err) throw err;
+                    sendFileList();
+                });
+            }
         }
     });
 });
