@@ -20,6 +20,7 @@ var session = require("express-session")({
     saveUninitialized: true
 });
 var sharedsession = require("express-socket.io-session");
+var mkdirp = require('mkdirp');
 
 //app.use("/test", require('express').static(__dirname.replace('server', 'testClient')));
 app.use(express.static(__dirname + '/../client/'));
@@ -63,6 +64,7 @@ server.listen(app.get('port'));
 
 var sockets = {};
 io.on('connection', function(socket) {
+    console.log(socket.handshake.session);
     var roomID = socket.handshake.session.roomID;
     var isTeacher = socket.handshake.session.isTeacher;
     var userName = socket.handshake.session.userName;
@@ -157,13 +159,19 @@ io.on('connection', function(socket) {
                     console.log(userName);
                     filePath = path.join('uploadFile', data.destination, userName);
                 }
-                mkdirSync(filePath);
-
-                fs.writeFile(filePath, data.file, function(error) {
-                    if (error) {
-                        console.log("ERROR FILE : file write error!");
+                mkdirp(filePath, function(err) {
+                    if (err) {
+                        console.error(err)
+                    } else {
+                        fs.writeFile(path.join(filePath, data.fileName), data.file, function(error) {
+                            if (error) {
+                                console.log("ERROR FILE : file write error! - " + error);
+                            }
+                        });
                     }
                 });
+
+
             } else {
                 console.log("ERROR FILE : wrong destination - " + data);
             }
@@ -172,11 +180,3 @@ io.on('connection', function(socket) {
 });
 
 signal(credentials);
-
-var mkdirSync = function(path) {
-    try {
-        fs.mkdirSync(path);
-    } catch (e) {
-        if (e.code != 'EEXIST') throw e;
-    }
-}
